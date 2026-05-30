@@ -74,8 +74,9 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Architecture: Standalone Components only.
 - State Management: Angular Signals.
 - Styling: Tailwind CSS (latest stable version).
+- Component Library: PrimeNG (latest stable version).
 - Charts: AG Charts Community (free version).
-- Icons: HugeIcons (free version).
+- Icons: primeicons.
 - Data Tables: AG Grid (free version).
 - Real-Time Data Provider: Finnhub API.
 - Finnhub SDK: finnhub npm package.
