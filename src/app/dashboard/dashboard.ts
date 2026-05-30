@@ -6,8 +6,10 @@ import {
   inject,
   effect,
 } from '@angular/core';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
+import { FinnhubQuoteService } from '../services/finnhub-quote.service';
+import { AgCharts } from 'ag-charts-angular';
 
 // ─── Existing DTOs ────────────────────────────────────────────────────────────
 
@@ -58,13 +60,14 @@ export interface StockQuote extends WatchlistEntry {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, DatePipe, AgCharts],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard {
   private readonly finnhub = inject(FinnhubRealtimeService);
+  readonly quoteService = inject(FinnhubQuoteService);
 
   // ── Watchlist config ───────────────────────────────────────────────────────
   readonly watchlist: WatchlistEntry[] = [
@@ -155,4 +158,66 @@ export class Dashboard {
 
   // Expose connection status for template
   readonly wsStatus = this.finnhub.status;
+
+  // ── Real-Time Price Chart ─────────────────────────────────────────────────
+  readonly quote = this.quoteService.quote;
+  readonly chartLoading = this.quoteService.loading;
+  readonly chartError = this.quoteService.error;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly chartOptions = computed<any>(() => {
+    const history = this.quoteService.chartHistory();
+    const quote = this.quote();
+    const isUp = (quote?.changePct ?? 0) >= 0;
+    return {
+      data: history.map((p) => ({ time: new Date(p.time), price: p.price })),
+      background: { fill: 'transparent' },
+      padding: { top: 8, right: 16, bottom: 8, left: 8 },
+      series: [
+        {
+          type: 'line',
+          xKey: 'time',
+          yKey: 'price',
+          stroke: isUp ? '#10b981' : '#ef4444',
+          strokeWidth: 2,
+          marker: { enabled: false },
+          tooltip: {
+            renderer: ({ datum }: { datum: { time: Date; price: number } }) => ({
+              content: `$${datum.price.toFixed(2)}`,
+              title: datum.time.toLocaleTimeString(),
+            }),
+          },
+        },
+      ],
+      axes: [
+        {
+          type: 'time',
+          position: 'bottom',
+          label: { format: '%H:%M:%S', fontSize: 10, color: '#9ca3af' },
+          line: { enabled: false },
+          tick: { enabled: false },
+          gridLine: { enabled: false },
+        },
+        {
+          type: 'number',
+          position: 'right',
+          label: {
+            formatter: ({ value }: { value: number }) => `$${value.toFixed(0)}`,
+            fontSize: 10,
+            color: '#9ca3af',
+          },
+          gridLine: { style: [{ stroke: '#f3f4f6', lineDash: [4, 4] }] },
+          line: { enabled: false },
+          tick: { enabled: false },
+        },
+      ],
+      legend: { enabled: false },
+    };
+  });
+
+  readonly chartSymbols = ['AAPL', 'AMZN', 'MSFT', 'GOOGL', 'TSLA'] as const;
+
+  setChartSymbol(symbol: string): void {
+    this.quoteService.setSymbol(symbol);
+  }
 }
