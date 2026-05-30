@@ -3,8 +3,13 @@ import {
   ChangeDetectionStrategy,
   signal,
   computed,
+  inject,
+  effect,
 } from '@angular/core';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
+
+// ─── Existing DTOs ────────────────────────────────────────────────────────────
 
 export interface Transaction {
   readonly id: string;
@@ -23,6 +28,34 @@ export interface Employee {
   readonly avatarColor: string;
 }
 
+// ─── Stock Ticker DTOs ────────────────────────────────────────────────────────
+
+export interface WatchlistEntry {
+  readonly symbol: string;       // Finnhub symbol (e.g. 'BINANCE:BTCUSDT')
+  readonly displaySymbol: string; // Short label (e.g. 'BTC/USDT')
+  readonly displayName: string;
+  readonly initials: string;
+  readonly avatarColor: string;
+}
+
+interface PriceState {
+  readonly current: number;
+  readonly previous: number;
+  readonly volume: number;
+  readonly timestamp: number;
+}
+
+export interface StockQuote extends WatchlistEntry {
+  readonly price: number;
+  readonly change: number;
+  readonly changePct: number;
+  readonly volume: number;
+  readonly timestamp: number;
+  readonly hasData: boolean;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 @Component({
   selector: 'app-dashboard',
   imports: [CurrencyPipe, DecimalPipe],
@@ -31,14 +64,67 @@ export interface Employee {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard {
-  // ── KPI Signals ──────────────────────────────────────────────────────────
+  private readonly finnhub = inject(FinnhubRealtimeService);
+
+  // ── Watchlist config ───────────────────────────────────────────────────────
+  readonly watchlist: WatchlistEntry[] = [
+    { symbol: 'AAPL', displaySymbol: 'AAPL', displayName: 'Apple Inc.', initials: 'AAPL', avatarColor: '#6b7280' },
+    { symbol: 'AMZN', displaySymbol: 'AMZN', displayName: 'Amazon.com', initials: 'AMZN', avatarColor: '#f97316' },
+    { symbol: 'MSFT', displaySymbol: 'MSFT', displayName: 'Microsoft Corp.', initials: 'MSFT', avatarColor: '#3b82f6' },
+    { symbol: 'BINANCE:BTCUSDT', displaySymbol: 'BTC/USD', displayName: 'Bitcoin / USDT', initials: 'BTC', avatarColor: '#f59e0b' },
+  ];
+
+  // ── Internal price state (symbol → latest + previous price) ───────────────
+  private readonly priceState = signal<Record<string, PriceState>>({});
+
+  constructor() {
+    // React to batched trade ticks from the service and update price state.
+    effect(() => {
+      const trades = this.finnhub.lastTrades();
+      if (!trades.length) return;
+
+      this.priceState.update((state) => {
+        const next: Record<string, PriceState> = { ...state };
+        for (const trade of trades) {
+          const prev = next[trade.symbol];
+          next[trade.symbol] = {
+            current: trade.price,
+            previous: prev?.current ?? trade.price,
+            volume: trade.volume,
+            timestamp: trade.timestamp,
+          };
+        }
+        return next;
+      });
+    });
+  }
+
+  // ── Derived stock quotes ───────────────────────────────────────────────────
+  readonly stockQuotes = computed<StockQuote[]>(() => {
+    const state = this.priceState();
+    return this.watchlist.map((entry) => {
+      const data = state[entry.symbol];
+      const price = data?.current ?? 0;
+      const prev = data?.previous ?? price;
+      const change = price - prev;
+      const changePct = prev > 0 ? (change / prev) * 100 : 0;
+      return { ...entry, price, change, changePct, volume: data?.volume ?? 0, timestamp: data?.timestamp ?? 0, hasData: !!data };
+    });
+  });
+
+  // Top gainers sorted by % change descending
+  readonly topGainers = computed(() =>
+    [...this.stockQuotes()].sort((a, b) => b.changePct - a.changePct),
+  );
+
+  // ── KPI Signals ───────────────────────────────────────────────────────────
   readonly kpiBalance = signal(124_254.62);
   readonly kpiBalanceChange = signal(8.2);
   readonly kpiIncome = signal(265_172);
   readonly kpiExpense = signal(98_284);
   readonly kpiTax = signal(46_174);
 
-  // ── Stock Signals ─────────────────────────────────────────────────────────
+  // ── Stock Widget ──────────────────────────────────────────────────────────
   readonly stockTotal = signal(13_645);
   readonly stockSoldOut = signal(11_167);
   readonly stockAvailable = signal(2_478);
@@ -46,82 +132,27 @@ export class Dashboard {
     Math.round((this.stockSoldOut() / this.stockTotal()) * 100),
   );
 
-  // ── Recent Transactions ───────────────────────────────────────────────────
+  // ── Transactions ──────────────────────────────────────────────────────────
   readonly transactions = signal<Transaction[]>([
-    {
-      id: '476-893',
-      product: 'Premium T-Shirt',
-      variant: '1 Pcs • Size M',
-      status: 'Success',
-      amount: 24.51,
-    },
-    {
-      id: '476-892',
-      product: 'Maxim Polo New',
-      variant: '1 Pcs • Size L',
-      status: 'Pending',
-      amount: 14.54,
-    },
-    {
-      id: '476-891',
-      product: 'Vintage T-Shirt',
-      variant: '1 Pcs • Size S',
-      status: 'Failed',
-      amount: 32.0,
-    },
-    {
-      id: '476-890',
-      product: 'Classic Hoodie',
-      variant: '1 Pcs • Size XL',
-      status: 'Success',
-      amount: 45.99,
-    },
-    {
-      id: '476-889',
-      product: 'Sport Jogger',
-      variant: '1 Pcs • Size M',
-      status: 'Pending',
-      amount: 28.75,
-    },
+    { id: '476-893', product: 'Premium T-Shirt', variant: '1 Pcs • Size M', status: 'Success', amount: 24.51 },
+    { id: '476-892', product: 'Maxim Polo New', variant: '1 Pcs • Size L', status: 'Pending', amount: 14.54 },
+    { id: '476-891', product: 'Vintage T-Shirt', variant: '1 Pcs • Size S', status: 'Failed', amount: 32.00 },
+    { id: '476-890', product: 'Classic Hoodie', variant: '1 Pcs • Size XL', status: 'Success', amount: 45.99 },
+    { id: '476-889', product: 'Sport Jogger', variant: '1 Pcs • Size M', status: 'Pending', amount: 28.75 },
   ]);
 
-  // ── Top Employees ─────────────────────────────────────────────────────────
+  // ── Employees ─────────────────────────────────────────────────────────────
   readonly employees = signal<Employee[]>([
-    {
-      id: '1',
-      initials: 'AM',
-      name: 'Alexander Munle',
-      products: 98,
-      revenue: 2386,
-      avatarColor: '#1a3d2b',
-    },
-    {
-      id: '2',
-      initials: 'DR',
-      name: 'Dianne Russell',
-      products: 90,
-      revenue: 2142,
-      avatarColor: '#7ed47e',
-    },
-    {
-      id: '3',
-      initials: 'MM',
-      name: 'Marvin McKinney',
-      products: 82,
-      revenue: 1824,
-      avatarColor: '#9e9e9e',
-    },
-    {
-      id: '4',
-      initials: 'BS',
-      name: 'Brooklyn Simmons',
-      products: 76,
-      revenue: 1494,
-      avatarColor: '#2d6a4f',
-    },
+    { id: '1', initials: 'AM', name: 'Alexander Munle', products: 98, revenue: 2386, avatarColor: '#1a3d2b' },
+    { id: '2', initials: 'DR', name: 'Dianne Russell', products: 90, revenue: 2142, avatarColor: '#7ed47e' },
+    { id: '3', initials: 'MM', name: 'Marvin McKinney', products: 82, revenue: 1824, avatarColor: '#9e9e9e' },
+    { id: '4', initials: 'BS', name: 'Brooklyn Simmons', products: 76, revenue: 1494, avatarColor: '#2d6a4f' },
   ]);
 
   // ── UI State ──────────────────────────────────────────────────────────────
   readonly searchQuery = signal('');
   readonly selectedDate = signal('Mar 25, 2024');
+
+  // Expose connection status for template
+  readonly wsStatus = this.finnhub.status;
 }

@@ -17,7 +17,7 @@ export class App {
 
   constructor() {
     // Kick off the WebSocket connection immediately.
-    // this.finnhub.connect();
+    this.finnhub.connect();
 
     // Subscribe to default symbols once the connection is established.
     effect(() => {
