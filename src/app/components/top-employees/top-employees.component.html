@@ -1,0 +1,37 @@
+    <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex-1"
+      aria-label="Top employees by sales">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-base font-bold text-gray-800">Top Employees</h2>
+        <button type="button"
+          class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+          aria-label="More employee options">
+          <i class="pi pi-ellipsis-h text-sm" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <ul class="flex flex-col gap-4" role="list" aria-label="Top employees list">
+        @for (emp of employees(); track emp.id) {
+        <li class="flex items-center gap-3 group" role="listitem">
+          <!-- Avatar -->
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm"
+            [style.backgroundColor]="emp.avatarColor" [attr.aria-label]="emp.name + ' avatar'">
+            {{ emp.initials }}
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-800 truncate">{{ emp.name }}</p>
+            <p class="text-xs text-gray-400">Sales {{ emp.products }} Product</p>
+          </div>
+
+          <!-- Revenue -->
+          <p class="text-sm font-bold text-gray-900 flex-shrink-0"
+            [attr.aria-label]="emp.name + ' revenue: ' + (emp.revenue | currency:'USD':'symbol':'1.0-0')">
+            {{ emp.revenue | currency:'USD':'symbol':'1.0-0' }}
+          </p>
+        </li>
+        }
+      </ul>
+    </section>
+  

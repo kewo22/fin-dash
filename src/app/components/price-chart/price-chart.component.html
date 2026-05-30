@@ -1,0 +1,117 @@
+    <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+      aria-label="Real-time stock price chart">
+
+      <!-- Card Header -->
+      <div class="flex items-start justify-between mb-5 flex-wrap gap-3">
+        <div>
+          <h2 class="text-base font-bold text-gray-800">Real-Time Price Chart</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Polled every 7 s · Powered by Finnhub</p>
+        </div>
+
+        <!-- Symbol tabs + live pill -->
+        <div class="flex items-center gap-2 flex-wrap">
+          @for (sym of symbols(); track sym) {
+          <button type="button"
+            class="px-3 py-1 text-xs font-semibold rounded-full border transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+            [class]="symbol() === sym
+              ? 'bg-[#1a3d2b] text-white border-[#1a3d2b]'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-[#1a3d2b] hover:text-[#1a3d2b]'"
+            [attr.aria-pressed]="symbol() === sym" [attr.aria-label]="'Show price chart for ' + sym"
+            (click)="symbolChange.emit(sym)">{{ sym }}</button>
+          }
+          @if (!chartLoading()) {
+          <span
+            class="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
+            LIVE
+          </span>
+          } @else {
+          <span
+            class="px-2.5 py-1 text-[10px] font-semibold bg-amber-50 text-amber-600 rounded-full">Loading…</span>
+          }
+        </div>
+      </div>
+
+      <!-- 5 Price Stat Pills -->
+      @if (quote(); as q) {
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5" role="list"
+        aria-label="{{ q.symbol }} price statistics">
+        <!-- Current -->
+        <div class="sm:col-span-1 col-span-2 rounded-xl bg-gray-50 px-4 py-3" role="listitem">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Current</p>
+          <p class="text-lg font-extrabold tabular-nums leading-none"
+            [class]="q.changePct >= 0 ? 'text-emerald-600' : 'text-red-500'"
+            [attr.aria-label]="'Current price ' + (q.currentPrice | currency:'USD':'symbol':'1.2-2')">
+            {{ q.currentPrice | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+          <p class="text-[10px] mt-1 font-semibold"
+            [class]="q.changePct >= 0 ? 'text-emerald-500' : 'text-red-400'">
+            {{ q.changePct >= 0 ? '+' : '' }}{{ q.changePct | number:'1.2-2' }}%
+          </p>
+        </div>
+        <!-- Open -->
+        <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Open</p>
+          <p class="text-sm font-bold text-gray-800 tabular-nums"
+            [attr.aria-label]="'Open price ' + (q.openPrice | currency:'USD':'symbol':'1.2-2')">
+            {{ q.openPrice | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+        <!-- High -->
+        <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">High</p>
+          <p class="text-sm font-bold text-emerald-600 tabular-nums"
+            [attr.aria-label]="'Day high ' + (q.dayHigh | currency:'USD':'symbol':'1.2-2')">
+            {{ q.dayHigh | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+        <!-- Low -->
+        <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Low</p>
+          <p class="text-sm font-bold text-red-500 tabular-nums"
+            [attr.aria-label]="'Day low ' + (q.dayLow | currency:'USD':'symbol':'1.2-2')">
+            {{ q.dayLow | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+        <!-- Prev Close -->
+        <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Prev Close</p>
+          <p class="text-sm font-bold text-gray-800 tabular-nums"
+            [attr.aria-label]="'Previous close ' + (q.prevClose | currency:'USD':'symbol':'1.2-2')">
+            {{ q.prevClose | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+      </div>
+      } @else {
+      <!-- Skeleton stats shown while first fetch is in-flight -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5" aria-hidden="true">
+        @for (_ of [1,2,3,4,5]; track $index) {
+        <div class="rounded-xl bg-gray-50 px-4 py-3">
+          <div class="h-2.5 w-10 bg-gray-200 rounded animate-pulse mb-2"></div>
+          <div class="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- AG Charts Line Chart -->
+      @if (chartError()) {
+      <div class="h-64 flex flex-col items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50"
+        role="alert">
+        <i class="pi pi-exclamation-triangle text-xl text-red-400" aria-hidden="true"></i>
+        <p class="text-xs font-medium text-red-400">{{ chartError() }}</p>
+      </div>
+      } @else if (chartHistoryLength() === 0) {
+      <div class="h-64 bg-gray-50 rounded-xl animate-pulse" aria-label="Loading chart" aria-busy="true"></div>
+      } @else {
+      <div class="h-64" [attr.aria-label]="symbol() + ' live price chart'">
+        <ag-charts [options]="chartOptions()" style="height:100%;width:100%" />
+      </div>
+      @if (quote(); as q) {
+      <p class="text-[10px] text-gray-300 text-right mt-1.5">
+        Last updated {{ q.updatedAt | date:'HH:mm:ss' }}
+      </p>
+      }
+      }
+    </section>
+  

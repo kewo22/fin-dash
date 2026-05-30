@@ -10,57 +10,29 @@ import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
 import { FinnhubQuoteService } from '../services/finnhub-quote.service';
 import { AgCharts } from 'ag-charts-angular';
+import { HeaderComponent } from '../components/header/header.component';
+import { LiveStockTickerComponent } from '../components/live-stock-ticker/live-stock-ticker.component';
+import { KpiBannerComponent } from '../components/kpi-banner/kpi-banner.component';
+import { PriceChartComponent } from '../components/price-chart/price-chart.component';
+import { RecentTransactionsComponent } from '../components/recent-transactions/recent-transactions.component';
+import { StockSummaryComponent } from '../components/stock-summary/stock-summary.component';
+import { TopEmployeesComponent } from '../components/top-employees/top-employees.component';
 
-// ─── Existing DTOs ────────────────────────────────────────────────────────────
-
-export interface Transaction {
-  readonly id: string;
-  readonly product: string;
-  readonly variant: string;
-  readonly status: 'Success' | 'Pending' | 'Failed';
-  readonly amount: number;
-}
-
-export interface Employee {
-  readonly id: string;
-  readonly initials: string;
-  readonly name: string;
-  readonly products: number;
-  readonly revenue: number;
-  readonly avatarColor: string;
-}
-
-// ─── Stock Ticker DTOs ────────────────────────────────────────────────────────
-
-export interface WatchlistEntry {
-  readonly symbol: string;       // Finnhub symbol (e.g. 'BINANCE:BTCUSDT')
-  readonly displaySymbol: string; // Short label (e.g. 'BTC/USDT')
-  readonly displayName: string;
-  readonly initials: string;
-  readonly avatarColor: string;
-}
-
-interface PriceState {
-  readonly current: number;
-  readonly previous: number;
-  readonly volume: number;
-  readonly timestamp: number;
-}
-
-export interface StockQuote extends WatchlistEntry {
-  readonly price: number;
-  readonly change: number;
-  readonly changePct: number;
-  readonly volume: number;
-  readonly timestamp: number;
-  readonly hasData: boolean;
-}
+import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '../models/dashboard.models';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CurrencyPipe, DecimalPipe, DatePipe, AgCharts],
+  imports: [
+    HeaderComponent,
+    LiveStockTickerComponent,
+    KpiBannerComponent,
+    PriceChartComponent,
+    RecentTransactionsComponent,
+    StockSummaryComponent,
+    TopEmployeesComponent
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
