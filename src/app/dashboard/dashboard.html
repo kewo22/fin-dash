@@ -1,1 +1,456 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-[#f4f6f4] font-[Inter,system-ui,sans-serif]">
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       TOP HEADER
+  ════════════════════════════════════════════════════════════════════════ -->
+  <header
+    class="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm"
+    role="banner"
+  >
+    <div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center gap-6">
+
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center gap-2.5 flex-shrink-0"
+        aria-label="Fin-Dash home"
+      >
+        <div
+          class="w-9 h-9 rounded-xl bg-[#1a3d2b] flex items-center justify-center shadow-sm"
+          aria-hidden="true"
+        >
+          <i class="pi pi-chart-bar text-white text-sm"></i>
+        </div>
+        <span class="text-lg font-bold text-[#1a3d2b] tracking-tight">Fin-Dash</span>
+      </a>
+
+      <!-- Search -->
+      <div class="flex-1 max-w-xs relative" role="search">
+        <i
+          class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"
+          aria-hidden="true"
+        ></i>
+        <input
+          id="global-search"
+          type="search"
+          placeholder="Search now..."
+          [value]="searchQuery()"
+          class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20 focus:border-[#1a3d2b] transition-all"
+          aria-label="Search dashboard"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Spacer -->
+      <div class="flex-1"></div>
+
+      <!-- Filter Button -->
+      <button
+        type="button"
+        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#1a3d2b] rounded-lg hover:bg-[#2d6a4f] active:scale-95 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/50 focus:ring-offset-1"
+        aria-label="Open filter options"
+      >
+        <i class="pi pi-sliders-h text-sm" aria-hidden="true"></i>
+        Filter By
+      </button>
+
+      <!-- Divider -->
+      <div class="h-8 w-px bg-gray-200" aria-hidden="true"></div>
+
+      <!-- User Profile -->
+      <button
+        type="button"
+        class="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+        aria-label="Open user menu for Vincentius R"
+        aria-haspopup="true"
+      >
+        <div
+          class="w-9 h-9 rounded-full bg-[#2d6a4f] flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+          aria-hidden="true"
+        >
+          VR
+        </div>
+        <div class="hidden sm:block text-left">
+          <p class="text-sm font-semibold text-gray-800 leading-tight">Vincentius R</p>
+          <p class="text-xs text-gray-400 leading-tight">vranggal&#64;gmail.com</p>
+        </div>
+        <i class="pi pi-chevron-down text-xs text-gray-400" aria-hidden="true"></i>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ════════════════════════════════════════════════════════════════════════ -->
+  <main
+    class="max-w-[1440px] mx-auto px-6 py-8"
+    id="main-content"
+    aria-label="Dashboard overview"
+  >
+
+    <!-- Page Title + Actions Row -->
+    <div class="flex items-start justify-between mb-7">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 leading-tight">Overview</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Monitor every activity of your company</p>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         KPI SUMMARY BANNER
+    ────────────────────────────────────────────────────────────────────── -->
+    <section
+      class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-7 overflow-hidden"
+      aria-label="Key performance indicators"
+    >
+      <div class="flex flex-col sm:flex-row items-stretch divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+
+        <!-- Total Balance -->
+        <div class="flex-[2] px-7 py-5">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Total Balance Your Company</p>
+          <div class="flex items-end gap-3 flex-wrap">
+            <p class="text-3xl font-extrabold text-gray-900 leading-none" aria-label="Total balance 124,254 dollars 62 cents">
+              {{ kpiBalance() | currency:'USD':'symbol':'1.2-2' }}
+            </p>
+            <span
+              class="flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mb-0.5"
+              aria-label="8.2 percent increase compared to last year"
+            >
+              <i class="pi pi-arrow-up text-[10px]" aria-hidden="true"></i>
+              {{ kpiBalanceChange() }}%
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1.5">Compare from last year</p>
+        </div>
+
+        <!-- Total Income -->
+        <div class="flex items-center gap-4 px-7 py-5 flex-1">
+          <div
+            class="w-11 h-11 rounded-full border-2 border-gray-200 flex items-center justify-center flex-shrink-0"
+            aria-hidden="true"
+          >
+            <i class="pi pi-credit-card text-gray-500 text-base"></i>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 mb-0.5">Total Income</p>
+            <p class="text-xl font-bold text-gray-900" aria-label="Total income 265,172 dollars">
+              {{ kpiIncome() | currency:'USD':'symbol':'1.0-0' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Total Expense -->
+        <div class="flex items-center gap-4 px-7 py-5 flex-1">
+          <div
+            class="w-11 h-11 rounded-full bg-[#1a3d2b] flex items-center justify-center flex-shrink-0"
+            aria-hidden="true"
+          >
+            <i class="pi pi-wallet text-white text-base"></i>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 mb-0.5">Total Expense</p>
+            <p class="text-xl font-bold text-gray-900" aria-label="Total expense 98,284 dollars">
+              {{ kpiExpense() | currency:'USD':'symbol':'1.0-0' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Total Tax -->
+        <div class="flex items-center gap-4 px-7 py-5 flex-1">
+          <div
+            class="w-11 h-11 rounded-full border-2 border-gray-200 flex items-center justify-center flex-shrink-0"
+            aria-hidden="true"
+          >
+            <i class="pi pi-building text-gray-500 text-base"></i>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-gray-400 mb-0.5">Total Tax</p>
+            <p class="text-xl font-bold text-gray-900" aria-label="Total tax 46,174 dollars">
+              {{ kpiTax() | currency:'USD':'symbol':'1.0-0' }}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         TWO-COLUMN CONTENT GRID
+    ────────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6">
+
+      <!-- ── LEFT COLUMN ─────────────────────────────────────────────────── -->
+      <div class="flex flex-col gap-6 min-w-0">
+
+        <!-- Transaction Activity Chart Placeholder -->
+        <section
+          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+          aria-label="Transaction activity chart"
+        >
+          <!-- Card Header -->
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <h2 class="text-base font-bold text-gray-800">Transaction Activity</h2>
+            <div class="flex items-center gap-5 text-xs text-gray-500" role="list" aria-label="Chart legend">
+              <span class="flex items-center gap-1.5" role="listitem">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1a3d2b] flex-shrink-0" aria-hidden="true"></span>
+                Total Transaction
+              </span>
+              <span class="flex items-center gap-1.5" role="listitem">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#7ed47e] flex-shrink-0" aria-hidden="true"></span>
+                Success Transaction
+              </span>
+            </div>
+          </div>
+
+          <!-- Chart Placeholder -->
+          @defer {
+            <div
+              class="h-64 bg-gradient-to-b from-gray-50 to-white rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 text-gray-400"
+              role="img"
+              aria-label="Transaction activity chart placeholder — implementation pending"
+            >
+              <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                <i class="pi pi-chart-line text-2xl text-gray-300" aria-hidden="true"></i>
+              </div>
+              <div class="text-center">
+                <p class="text-sm font-medium text-gray-400">AG Chart will render here</p>
+                <p class="text-xs text-gray-300 mt-0.5">Transaction Activity over time</p>
+              </div>
+            </div>
+          } @placeholder {
+            <div class="h-64 bg-gray-50 rounded-xl animate-pulse"></div>
+          }
+        </section>
+
+        <!-- Recent Transactions Table Placeholder -->
+        <section
+          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+          aria-label="Recent transactions"
+        >
+          <!-- Card Header -->
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <h2 class="text-base font-bold text-gray-800">Recent Transaction</h2>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+                aria-label="Select date: March 25, 2024"
+              >
+                <i class="pi pi-calendar text-xs" aria-hidden="true"></i>
+                {{ selectedDate() }}
+                <i class="pi pi-chevron-down text-xs" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+                aria-label="Filter transaction table"
+              >
+                <i class="pi pi-filter text-xs" aria-hidden="true"></i>
+                Filter Table
+              </button>
+              <button
+                type="button"
+                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+                aria-label="More table options"
+              >
+                <i class="pi pi-ellipsis-h text-sm" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Preview Rows (sample, non-interactive) -->
+          <div class="mb-4 overflow-x-auto">
+            <table class="w-full text-sm" aria-label="Recent transactions preview">
+              <thead>
+                <tr class="border-b border-gray-100">
+                  <th scope="col" class="pb-3 text-left w-8">
+                    <input type="checkbox" class="rounded accent-[#1a3d2b]" aria-label="Select all transactions" />
+                  </th>
+                  <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">ID Transaction</th>
+                  <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Product</th>
+                  <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                  <th scope="col" class="pb-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">Amount</th>
+                  <th scope="col" class="pb-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                @for (tx of transactions(); track tx.id) {
+                  <tr class="hover:bg-gray-50/60 transition-colors">
+                    <td class="py-3 pr-3">
+                      <input type="checkbox" class="rounded accent-[#1a3d2b]" [attr.aria-label]="'Select transaction ' + tx.id" />
+                    </td>
+                    <td class="py-3 pr-4 text-xs font-mono text-gray-500" [attr.aria-label]="'Transaction ID: ' + tx.id">{{ tx.id }}</td>
+                    <td class="py-3 pr-4">
+                      <p class="font-medium text-gray-800 text-sm">{{ tx.product }}</p>
+                      <p class="text-xs text-gray-400">{{ tx.variant }}</p>
+                    </td>
+                    <td class="py-3 pr-4">
+                      @if (tx.status === 'Success') {
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100"
+                          role="status"
+                        >Success</span>
+                      }
+                      @if (tx.status === 'Pending') {
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100"
+                          role="status"
+                        >Pending</span>
+                      }
+                      @if (tx.status === 'Failed') {
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-100"
+                          role="status"
+                        >Failed</span>
+                      }
+                    </td>
+                    <td class="py-3 pr-4 text-right font-semibold text-gray-800 text-sm">
+                      {{ tx.amount | currency:'USD':'symbol':'1.2-2' }}
+                    </td>
+                    <td class="py-3">
+                      <div class="flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#1a3d2b] hover:bg-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+                          [attr.aria-label]="'Edit transaction ' + tx.id"
+                        >
+                          <i class="pi pi-pencil text-xs" aria-hidden="true"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                          [attr.aria-label]="'Delete transaction ' + tx.id"
+                        >
+                          <i class="pi pi-trash text-xs" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer / AG Grid placeholder note -->
+          <div
+            class="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center gap-3 py-5 text-gray-400"
+            role="note"
+            aria-label="AG Grid data table will be implemented here"
+          >
+            <i class="pi pi-table text-lg" aria-hidden="true"></i>
+            <span class="text-xs font-medium">AG Grid with pagination &amp; virtual scroll — implementation pending</span>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- ── RIGHT COLUMN ────────────────────────────────────────────────── -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Total All Stock Product (Dark Card) -->
+        <section
+          class="rounded-2xl bg-[#0d1f14] text-white p-6 shadow-lg"
+          aria-label="Total stock product summary"
+        >
+          <div class="flex items-start justify-between mb-1">
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Total All Stock Product</p>
+            <div class="flex gap-1">
+              <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+              <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+              <span class="w-4 h-1 rounded-full bg-gray-400"></span>
+            </div>
+          </div>
+
+          <p
+            class="text-4xl font-extrabold mt-2 mb-5 tracking-tight"
+            aria-label="{{ stockAvailable() | number }} available stock"
+          >
+            {{ stockAvailable() | number }}
+          </p>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-700 rounded-full h-2 mb-5" role="progressbar" [attr.aria-valuenow]="stockProgressPct()" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="stockProgressPct() + '% sold out'">
+            <div
+              class="bg-[#7ed47e] h-2 rounded-full transition-all duration-700"
+              [style.width.%]="stockProgressPct()"
+            ></div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="flex justify-between items-end">
+            <div>
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="w-2 h-2 rounded-full bg-[#7ed47e]" aria-hidden="true"></span>
+                <p class="text-xs text-gray-400">Sold Out</p>
+              </div>
+              <p class="text-xl font-bold" aria-label="{{ stockSoldOut() | number }} sold out">
+                {{ stockSoldOut() | number }}
+              </p>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-1.5 mb-1">
+                <p class="text-xs text-gray-400">Total Stock</p>
+                <span class="w-2 h-2 rounded-full bg-gray-500" aria-hidden="true"></span>
+              </div>
+              <p class="text-xl font-bold" aria-label="{{ stockTotal() | number }} total stock">
+                {{ stockTotal() | number }}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Top Employees -->
+        <section
+          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex-1"
+          aria-label="Top employees by sales"
+        >
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-base font-bold text-gray-800">Top Employees</h2>
+            <button
+              type="button"
+              class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+              aria-label="More employee options"
+            >
+              <i class="pi pi-ellipsis-h text-sm" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <ul class="flex flex-col gap-4" role="list" aria-label="Top employees list">
+            @for (emp of employees(); track emp.id) {
+              <li class="flex items-center gap-3 group" role="listitem">
+                <!-- Avatar -->
+                <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm"
+                  [style.backgroundColor]="emp.avatarColor"
+                  [attr.aria-label]="emp.name + ' avatar'"
+                >
+                  {{ emp.initials }}
+                </div>
+
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-800 truncate">{{ emp.name }}</p>
+                  <p class="text-xs text-gray-400">Sales {{ emp.products }} Product</p>
+                </div>
+
+                <!-- Revenue -->
+                <p
+                  class="text-sm font-bold text-gray-900 flex-shrink-0"
+                  [attr.aria-label]="emp.name + ' revenue: ' + (emp.revenue | currency:'USD':'symbol':'1.0-0')"
+                >
+                  {{ emp.revenue | currency:'USD':'symbol':'1.0-0' }}
+                </p>
+              </li>
+            }
+          </ul>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
