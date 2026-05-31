@@ -80,7 +80,7 @@
         Top Gainers
       </h3>
       <ol class="flex flex-col gap-4" aria-label="Stocks ranked by gain">
-        @for (quote of topGainers(); track quote.symbol; let i = $index) {
+        @for (quote of topGainers(); track $index; let i = $index) {
         <li class="flex items-center gap-3">
           <span class="w-5 text-xs font-bold text-gray-300 flex-shrink-0" aria-hidden="true">#{{ i + 1 }}</span>
           <div

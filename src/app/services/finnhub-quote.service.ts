@@ -16,6 +16,9 @@ export interface FinnhubQuote {
 export interface ChartPoint {
   readonly time: number; // epoch ms
   readonly price: number;
+  readonly open: number;
+  readonly high: number;
+  readonly low: number;
 }
 
 export interface QuoteSnapshot {
@@ -30,7 +33,7 @@ export interface QuoteSnapshot {
   readonly updatedAt: number;
 }
 
-const POLL_INTERVAL_MS = 1_000;
+const POLL_INTERVAL_MS = 5_000;
 const MAX_CHART_POINTS = 60;
 
 @Injectable({ providedIn: 'root' })
@@ -89,7 +92,13 @@ export class FinnhubQuoteService {
         this._loading.set(false);
         this._error.set(null);
         this._chartHistory.update((history) => {
-          const point: ChartPoint = { time: Date.now(), price: quote.c };
+          const point: ChartPoint = { 
+            time: Date.now(), 
+            price: quote.c,
+            open: quote.o,
+            high: quote.h,
+            low: quote.l
+          };
           const next = [...history, point];
           return next.length > MAX_CHART_POINTS ? next.slice(-MAX_CHART_POINTS) : next;
         });

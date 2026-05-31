@@ -4,7 +4,7 @@
   <div class="flex items-start justify-between mb-5 flex-wrap gap-3">
     <div>
       <h2 class="text-base font-bold text-gray-800">Real-Time Price Chart</h2>
-      <p class="text-xs text-gray-400 mt-0.5">Polled every 7 s · Powered by Finnhub</p>
+      <p class="text-xs text-gray-400 mt-0.5">Polled every 5 s · Powered by Finnhub</p>
     </div>
 
     <!-- Symbol tabs + live pill -->
@@ -103,10 +103,5 @@
   <div class="h-72 w-full" [attr.aria-label]="symbol() + ' live price chart'">
     <ag-charts [options]="chartOptions()" style="height:100%;width:100%" />
   </div>
-  @if (quote(); as q) {
-  <p class="text-[10px] text-gray-300 text-right mt-1.5">
-    Last updated {{ q.updatedAt | date:'HH:mm:ss' }}
-  </p>
-  }
   }
 </section>

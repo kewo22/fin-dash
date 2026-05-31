@@ -142,7 +142,13 @@ export class Dashboard {
     const quote = this.quote();
     const isUp = (quote?.changePct ?? 0) >= 0;
     return {
-      data: history.map((p) => ({ time: new Date(p.time), price: p.price })),
+      data: history.map((p) => ({ 
+        time: new Date(p.time), 
+        price: p.price,
+        open: p.open,
+        high: p.high,
+        low: p.low
+      })),
       background: { fill: 'transparent' },
       padding: { top: 8, right: 16, bottom: 8, left: 8 },
       series: [
@@ -150,6 +156,7 @@ export class Dashboard {
           type: 'line',
           xKey: 'time',
           yKey: 'price',
+          yName: 'Current',
           stroke: isUp ? '#10b981' : '#ef4444',
           strokeWidth: 2,
           marker: { enabled: false },
@@ -160,15 +167,42 @@ export class Dashboard {
             }),
           },
         },
+        {
+          type: 'line',
+          xKey: 'time',
+          yKey: 'open',
+          yName: 'Open',
+          stroke: '#3b82f6',
+          strokeWidth: 2,
+          marker: { enabled: false },
+        },
+        {
+          type: 'line',
+          xKey: 'time',
+          yKey: 'high',
+          yName: 'High',
+          stroke: '#f59e0b',
+          strokeWidth: 2,
+          marker: { enabled: false },
+        },
+        {
+          type: 'line',
+          xKey: 'time',
+          yKey: 'low',
+          yName: 'Low',
+          stroke: '#8b5cf6',
+          strokeWidth: 2,
+          marker: { enabled: false },
+        },
       ],
       axes: [
         {
           type: 'time',
           position: 'bottom',
           label: { format: '%H:%M:%S', fontSize: 10, color: '#9ca3af' },
-          line: { enabled: false },
-          tick: { enabled: false },
-          gridLine: { enabled: false },
+          line: { enabled: true },
+          tick: { enabled: true },
+          gridLine: { enabled: true },
         },
         {
           type: 'number',
@@ -179,11 +213,11 @@ export class Dashboard {
             color: '#9ca3af',
           },
           gridLine: { style: [{ stroke: '#f3f4f6', lineDash: [4, 4] }] },
-          line: { enabled: false },
-          tick: { enabled: false },
+          line: { enabled: true },
+          tick: { enabled: true },
         },
       ],
-      legend: { enabled: false },
+      legend: { enabled: true, position: 'top' },
     };
   });
 
