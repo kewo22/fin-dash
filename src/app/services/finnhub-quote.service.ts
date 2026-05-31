@@ -30,7 +30,7 @@ export interface QuoteSnapshot {
   readonly updatedAt: number;
 }
 
-const POLL_INTERVAL_MS = 7_000;
+const POLL_INTERVAL_MS = 1_000;
 const MAX_CHART_POINTS = 60;
 
 @Injectable({ providedIn: 'root' })

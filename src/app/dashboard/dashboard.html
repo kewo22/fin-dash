@@ -21,20 +21,17 @@
     <!-- ─────────────────────────────────────────────────────────────────────
          LIVE STOCK TICKER
     ────────────────────────────────────────────────────────────────────── -->
-    <app-live-stock-ticker
-      [wsStatus]="wsStatus()"
-      [stockQuotes]="stockQuotes()"
-      [topGainers]="topGainers()" />
+    <app-live-stock-ticker [wsStatus]="wsStatus()" [stockQuotes]="stockQuotes()" [topGainers]="topGainers()" />
 
     <!-- ─────────────────────────────────────────────────────────────────────
          KPI SUMMARY BANNER
     ────────────────────────────────────────────────────────────────────── -->
-    <app-kpi-banner
+    <!-- <app-kpi-banner
       [balance]="kpiBalance()"
       [balanceChange]="kpiBalanceChange()"
       [income]="kpiIncome()"
       [expense]="kpiExpense()"
-      [tax]="kpiTax()" />
+      [tax]="kpiTax()" /> -->
 
     <!-- ─────────────────────────────────────────────────────────────────────
          TWO-COLUMN CONTENT GRID
@@ -45,20 +42,12 @@
       <div class="flex flex-col gap-6 min-w-0">
 
         <!-- Real-Time Price Chart -->
-        <app-price-chart
-          [symbols]="chartSymbols"
-          [symbol]="quoteService.symbol()"
-          [quote]="quote()"
-          [chartLoading]="chartLoading()"
-          [chartError]="chartError()"
-          [chartOptions]="chartOptions()"
-          [chartHistoryLength]="quoteService.chartHistory().length"
-          (symbolChange)="setChartSymbol($event)" />
+        <app-price-chart [symbols]="chartSymbols" [symbol]="quoteService.symbol()" [quote]="quote()"
+          [chartLoading]="chartLoading()" [chartError]="chartError()" [chartOptions]="chartOptions()"
+          [chartHistoryLength]="quoteService.chartHistory().length" (symbolChange)="setChartSymbol($event)" />
 
         <!-- Recent Transactions Table Placeholder -->
-        <app-recent-transactions
-          [selectedDate]="selectedDate()"
-          [transactions]="transactions()" />
+        <app-recent-transactions [selectedDate]="selectedDate()" [transactions]="transactions()" />
 
       </div>
 
@@ -66,15 +55,11 @@
       <div class="flex flex-col gap-6">
 
         <!-- Total All Stock Product (Dark Card) -->
-        <app-stock-summary
-          [available]="stockAvailable()"
-          [soldOut]="stockSoldOut()"
-          [total]="stockTotal()"
+        <app-stock-summary [available]="stockAvailable()" [soldOut]="stockSoldOut()" [total]="stockTotal()"
           [progressPct]="stockProgressPct()" />
 
         <!-- Top Employees -->
-        <app-top-employees
-          [employees]="employees()" />
+        <app-top-employees [employees]="employees()" />
 
       </div>
 
