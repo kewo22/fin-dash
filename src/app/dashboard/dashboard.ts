@@ -142,8 +142,8 @@ export class Dashboard {
     const quote = this.quote();
     const isUp = (quote?.changePct ?? 0) >= 0;
     return {
-      data: history.map((p) => ({ 
-        time: new Date(p.time), 
+      data: history.map((p) => ({
+        time: new Date(p.time),
         price: p.price,
         open: p.open,
         high: p.high,
@@ -218,6 +218,7 @@ export class Dashboard {
         },
       ],
       legend: { enabled: true, position: 'top' },
+      minWidth: 0
     };
   });
 

@@ -4,7 +4,19 @@
   <div class="flex items-start justify-between mb-5 flex-wrap gap-3">
     <div>
       <h2 class="text-base font-bold text-gray-800">Real-Time Price Chart</h2>
-      <p class="text-xs text-gray-400 mt-0.5">Polled every 5 s · Powered by Finnhub</p>
+      <!-- Refresh countdown bar -->
+      <div class="flex flex-row items-center mb-4 gap-6" aria-label="Next data refresh countdown" role="timer">
+        <span class="text-[10px] text-gray-400">
+          Next refresh in {{ ((countdown() / 100) * 5) | number:'1.0-0' }}s
+        </span>
+        <div class="w-20 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-primary rounded-full transition-all duration-50 ease-linear"
+            [style.width.%]="countdown()" role="progressbar" [attr.aria-valuenow]="countdown()" aria-valuemin="0"
+            aria-valuemax="100">
+          </div>
+        </div>
+        <span class="text-[10px] text-gray-400">every 5 s</span>
+      </div>
     </div>
 
     <!-- Symbol tabs + live pill -->
@@ -92,16 +104,18 @@
 
   <!-- AG Charts Line Chart -->
   @if (chartError()) {
-  <div class="h-72 flex flex-col items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50"
+  <div
+    class="-mx-6 -mb-6 h-72 flex flex-col items-center justify-center gap-2 rounded-b-2xl border-t border-red-100 bg-red-50"
     role="alert">
     <i class="pi pi-exclamation-triangle text-xl text-red-400" aria-hidden="true"></i>
     <p class="text-xs font-medium text-red-400">{{ chartError() }}</p>
   </div>
   } @else if (chartHistoryLength() === 0) {
-  <div class="h-72 bg-gray-50 rounded-xl animate-pulse" aria-label="Loading chart" aria-busy="true"></div>
+  <div class="-mx-6 -mb-6 h-72 bg-gray-50 rounded-b-2xl animate-pulse" aria-label="Loading chart" aria-busy="true">
+  </div>
   } @else {
-  <div class="h-72 w-full" [attr.aria-label]="symbol() + ' live price chart'">
-    <ag-charts [options]="chartOptions()" style="height:100%;width:100%" />
+  <div class="-mx-6 -mb-6 h-72 rounded-b-2xl overflow-hidden" [attr.aria-label]="symbol() + ' live price chart'">
+    <ag-charts [options]="chartOptions()" style="width: 100%; height: 100%; display: block" />
   </div>
   }
 </section>
