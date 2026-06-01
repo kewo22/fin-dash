@@ -2,8 +2,9 @@ import { Injectable, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, filter, auditTime } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { TradeDto, ConnectionStatus } from '../interfaces';
 
-// ─── DTOs ─────────────────────────────────────────────────────────────────────
+// ─── Private DTOs ─────────────────────────────────────────────────────────────
 
 /** Raw trade object as received from Finnhub WebSocket. */
 interface FinnhubRawTrade {
@@ -19,20 +20,6 @@ interface FinnhubRawMessage {
   readonly data?: FinnhubRawTrade[];
   readonly msg?: string;
 }
-
-/** Clean public trade DTO exposed via signals. */
-export interface TradeDto {
-  readonly price: number;
-  readonly symbol: string;
-  readonly timestamp: number;
-  readonly volume: number;
-}
-
-export type ConnectionStatus =
-  | 'disconnected'
-  | 'connecting'
-  | 'connected'
-  | 'error';
 
 // ─── Service ──────────────────────────────────────────────────────────────────
 

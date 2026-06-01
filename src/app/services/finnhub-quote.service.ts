@@ -3,35 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, switchMap, catchError, EMPTY, startWith } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface FinnhubQuote {
-  readonly c: number;  // current price
-  readonly o: number;  // open price
-  readonly h: number;  // day high
-  readonly l: number;  // day low
-  readonly pc: number; // previous close
-  readonly t: number;  // timestamp (epoch seconds)
-}
-
-export interface ChartPoint {
-  readonly time: number; // epoch ms
-  readonly price: number;
-  readonly open: number;
-  readonly high: number;
-  readonly low: number;
-}
-
-export interface QuoteSnapshot {
-  readonly symbol: string;
-  readonly currentPrice: number;
-  readonly openPrice: number;
-  readonly dayHigh: number;
-  readonly dayLow: number;
-  readonly prevClose: number;
-  readonly change: number;
-  readonly changePct: number;
-  readonly updatedAt: number;
-}
+import { FinnhubQuote, ChartPoint, QuoteSnapshot } from '../interfaces';
 
 const POLL_INTERVAL_MS = 5_000;
 const MAX_CHART_POINTS = 60;
@@ -92,12 +64,12 @@ export class FinnhubQuoteService {
         this._loading.set(false);
         this._error.set(null);
         this._chartHistory.update((history) => {
-          const point: ChartPoint = { 
-            time: Date.now(), 
+          const point: ChartPoint = {
+            time: Date.now(),
             price: quote.c,
             open: quote.o,
             high: quote.h,
-            low: quote.l
+            low: quote.l,
           };
           const next = [...history, point];
           return next.length > MAX_CHART_POINTS ? next.slice(-MAX_CHART_POINTS) : next;

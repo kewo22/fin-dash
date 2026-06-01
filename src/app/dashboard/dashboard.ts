@@ -16,9 +16,9 @@ import { KpiBannerComponent } from '../components/kpi-banner/kpi-banner.componen
 import { PriceChartComponent } from '../components/price-chart/price-chart.component';
 import { RecentTransactionsComponent } from '../components/recent-transactions/recent-transactions.component';
 import { StockSummaryComponent } from '../components/stock-summary/stock-summary.component';
-import { TopEmployeesComponent } from '../components/top-employees/top-employees.component';
 
 import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '../models/dashboard.models';
+import { CompanySearcherComponent } from '../components/company-searcher/company-searcher.component';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '.
     PriceChartComponent,
     RecentTransactionsComponent,
     StockSummaryComponent,
-    TopEmployeesComponent
+    CompanySearcherComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
