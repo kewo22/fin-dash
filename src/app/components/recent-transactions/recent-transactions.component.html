@@ -1,104 +1,97 @@
-    <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" aria-label="Recent transactions">
-      <!-- Card Header -->
-      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <h2 class="text-base font-bold text-gray-800">Recent Transaction</h2>
-        <div class="flex items-center gap-2">
-          <button type="button"
-            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
-            aria-label="Select date: March 25, 2024">
-            <i class="pi pi-calendar text-xs" aria-hidden="true"></i>
-            {{ selectedDate() }}
-            <i class="pi pi-chevron-down text-xs" aria-hidden="true"></i>
-          </button>
-          <button type="button"
-            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
-            aria-label="Filter transaction table">
-            <i class="pi pi-filter text-xs" aria-hidden="true"></i>
-            Filter Table
-          </button>
-          <button type="button"
-            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
-            aria-label="More table options">
-            <i class="pi pi-ellipsis-h text-sm" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
+<section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" aria-label="Recent transactions">
+  <!-- Card Header -->
+  <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+    <h2 class="text-base font-bold text-gray-800">Recent Transaction</h2>
+    <div class="flex items-center gap-2">
+      <button type="button"
+        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+        aria-label="Select date: March 25, 2024">
+        <i class="pi pi-calendar text-xs" aria-hidden="true"></i>
+        {{ selectedDate() }}
+        <i class="pi pi-chevron-down text-xs" aria-hidden="true"></i>
+      </button>
+      <button type="button"
+        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+        aria-label="Filter transaction table">
+        <i class="pi pi-filter text-xs" aria-hidden="true"></i>
+        Filter Table
+      </button>
+      <button type="button"
+        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+        aria-label="More table options">
+        <i class="pi pi-ellipsis-h text-sm" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
 
-      <!-- Table Preview Rows (sample, non-interactive) -->
-      <div class="mb-4 overflow-x-auto">
-        <table class="w-full text-sm" aria-label="Recent transactions preview">
-          <thead>
-            <tr class="border-b border-gray-100">
-              <th scope="col" class="pb-3 text-left w-8">
-                <input type="checkbox" class="rounded accent-[#1a3d2b]" aria-label="Select all transactions" />
-              </th>
-              <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">ID Transaction</th>
-              <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Product</th>
-              <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-              <th scope="col" class="pb-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">Amount</th>
-              <th scope="col" class="pb-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Action</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-50">
-            @for (tx of transactions(); track tx.id) {
-            <tr class="hover:bg-gray-50/60 transition-colors">
-              <td class="py-3 pr-3">
-                <input type="checkbox" class="rounded accent-[#1a3d2b]"
-                  [attr.aria-label]="'Select transaction ' + tx.id" />
-              </td>
-              <td class="py-3 pr-4 text-xs font-mono text-gray-500" [attr.aria-label]="'Transaction ID: ' + tx.id">
-                {{ tx.id }}</td>
-              <td class="py-3 pr-4">
-                <p class="font-medium text-gray-800 text-sm">{{ tx.product }}</p>
-                <p class="text-xs text-gray-400">{{ tx.variant }}</p>
-              </td>
-              <td class="py-3 pr-4">
-                @if (tx.status === 'Success') {
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100"
-                  role="status">Success</span>
-                }
-                @if (tx.status === 'Pending') {
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100"
-                  role="status">Pending</span>
-                }
-                @if (tx.status === 'Failed') {
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-100"
-                  role="status">Failed</span>
-                }
-              </td>
-              <td class="py-3 pr-4 text-right font-semibold text-gray-800 text-sm">
-                {{ tx.amount | currency:'USD':'symbol':'1.2-2' }}
-              </td>
-              <td class="py-3">
-                <div class="flex items-center justify-center gap-2">
-                  <button type="button"
-                    class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#1a3d2b] hover:bg-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
-                    [attr.aria-label]="'Edit transaction ' + tx.id">
-                    <i class="pi pi-pencil text-xs" aria-hidden="true"></i>
-                  </button>
-                  <button type="button"
-                    class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/20"
-                    [attr.aria-label]="'Delete transaction ' + tx.id">
-                    <i class="pi pi-trash text-xs" aria-hidden="true"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+  <!-- Table Preview Rows (sample, non-interactive) -->
+  <div class="mb-4 overflow-x-auto">
+    <table class="w-full text-sm" aria-label="Recent transactions preview">
+      <thead>
+        <tr class="border-b border-gray-100">
+          <th scope="col" class="pb-3 text-left w-8">
+            <input type="checkbox" class="rounded accent-[#1a3d2b]" aria-label="Select all transactions" />
+          </th>
+          <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">ID
+            Transaction</th>
+          <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Product
+          </th>
+          <th scope="col" class="pb-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+          <th scope="col" class="pb-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wide">Amount
+          </th>
+          <th scope="col" class="pb-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wide">Action
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        @for (tx of transactions(); track tx.id) {
+        <tr class="hover:bg-gray-50/60 transition-colors">
+          <td class="py-3 pr-3">
+            <input type="checkbox" class="rounded accent-[#1a3d2b]" [attr.aria-label]="'Select transaction ' + tx.id" />
+          </td>
+          <td class="py-3 pr-4 text-xs font-mono text-gray-500" [attr.aria-label]="'Transaction ID: ' + tx.id">
+            {{ tx.id }}</td>
+          <td class="py-3 pr-4">
+            <p class="font-medium text-gray-800 text-sm">{{ tx.product }}</p>
+            <p class="text-xs text-gray-400">{{ tx.variant }}</p>
+          </td>
+          <td class="py-3 pr-4">
+            @if (tx.status === 'Success') {
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100"
+              role="status">Success</span>
             }
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Table Footer / AG Grid placeholder note -->
-      <div
-        class="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center gap-3 py-5 text-gray-400"
-        role="note" aria-label="AG Grid data table will be implemented here">
-        <i class="pi pi-table text-lg" aria-hidden="true"></i>
-        <span class="text-xs font-medium">AG Grid with pagination &amp; virtual scroll — implementation
-          pending</span>
-      </div>
-    </section>
-  
+            @if (tx.status === 'Pending') {
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100"
+              role="status">Pending</span>
+            }
+            @if (tx.status === 'Failed') {
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-100"
+              role="status">Failed</span>
+            }
+          </td>
+          <td class="py-3 pr-4 text-right font-semibold text-gray-800 text-sm">
+            {{ tx.amount | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+          <td class="py-3">
+            <div class="flex items-center justify-center gap-2">
+              <button type="button"
+                class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#1a3d2b] hover:bg-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a3d2b]/20"
+                [attr.aria-label]="'Edit transaction ' + tx.id">
+                <i class="pi pi-pencil text-xs" aria-hidden="true"></i>
+              </button>
+              <button type="button"
+                class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                [attr.aria-label]="'Delete transaction ' + tx.id">
+                <i class="pi pi-trash text-xs" aria-hidden="true"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
