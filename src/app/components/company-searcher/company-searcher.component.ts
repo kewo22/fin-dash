@@ -9,7 +9,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, EMPTY, filter } from 'rxjs';
-import { CompanyLookupService, CompanyProfile } from '../../services/company-lookup.service';
+import { CompanyLookupService } from '../../services/company-lookup.service';
+import { CompanyProfile } from '../../interfaces/company.interfaces';
 
 @Component({
   selector: 'app-company-searcher',
