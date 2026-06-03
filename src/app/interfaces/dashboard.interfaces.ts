@@ -38,3 +38,15 @@ export interface StockQuote extends WatchlistEntry {
   readonly timestamp: number;
   readonly hasData: boolean;
 }
+
+export interface StatPill {
+  label: string;
+  ariaLabel: string;
+  value: number;
+  /** Tailwind text-color class applied to the value. Defaults to 'text-gray-800'. */
+  valueClass?: string;
+  /** When set, renders a sub-line with this % change value. */
+  changePct?: number;
+  /** Extra host class on the pill wrapper (e.g. 'col-span-2 sm:col-span-1'). */
+  wrapperClass?: string;
+}

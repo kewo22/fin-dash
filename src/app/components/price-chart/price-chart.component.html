@@ -43,52 +43,11 @@
   </div>
 
   <!-- 5 Price Stat Pills -->
-  @if ( !chartLoading() && quote(); as q) {
-  <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5" role="list" aria-label="{{ q.symbol }} price statistics">
-    <!-- Current -->
-    <div class="sm:col-span-1 col-span-2 rounded-xl bg-gray-50 px-4 py-3" role="listitem">
-      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Current</p>
-      <p class="text-lg font-extrabold tabular-nums leading-none"
-        [class]="q.changePct >= 0 ? 'text-emerald-600' : 'text-red-500'"
-        [attr.aria-label]="'Current price ' + (q.currentPrice | currency:'USD':'symbol':'1.2-2')">
-        {{ q.currentPrice | currency:'USD':'symbol':'1.2-2' }}
-      </p>
-      <p class="text-[10px] mt-1 font-semibold" [class]="q.changePct >= 0 ? 'text-emerald-500' : 'text-red-400'">
-        {{ q.changePct >= 0 ? '+' : '' }}{{ q.changePct | number:'1.2-2' }}%
-      </p>
-    </div>
-    <!-- Open -->
-    <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
-      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Open</p>
-      <p class="text-sm font-bold text-gray-800 tabular-nums"
-        [attr.aria-label]="'Open price ' + (q.openPrice | currency:'USD':'symbol':'1.2-2')">
-        {{ q.openPrice | currency:'USD':'symbol':'1.2-2' }}
-      </p>
-    </div>
-    <!-- High -->
-    <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
-      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">High</p>
-      <p class="text-sm font-bold text-emerald-600 tabular-nums"
-        [attr.aria-label]="'Day high ' + (q.dayHigh | currency:'USD':'symbol':'1.2-2')">
-        {{ q.dayHigh | currency:'USD':'symbol':'1.2-2' }}
-      </p>
-    </div>
-    <!-- Low -->
-    <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
-      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Low</p>
-      <p class="text-sm font-bold text-red-500 tabular-nums"
-        [attr.aria-label]="'Day low ' + (q.dayLow | currency:'USD':'symbol':'1.2-2')">
-        {{ q.dayLow | currency:'USD':'symbol':'1.2-2' }}
-      </p>
-    </div>
-    <!-- Prev Close -->
-    <div class="rounded-xl bg-gray-50 px-4 py-3" role="listitem">
-      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Prev Close</p>
-      <p class="text-sm font-bold text-gray-800 tabular-nums"
-        [attr.aria-label]="'Previous close ' + (q.prevClose | currency:'USD':'symbol':'1.2-2')">
-        {{ q.prevClose | currency:'USD':'symbol':'1.2-2' }}
-      </p>
-    </div>
+  @if (!chartLoading() && quote(); as q) {
+  <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5" role="list" [attr.aria-label]="q.symbol + ' price statistics'">
+    @for (pill of statPills(); track pill.label) {
+      <app-stat-pill [pill]="pill" />
+    }
   </div>
   } @else {
   <!-- Skeleton stats shown while first fetch is in-flight -->
