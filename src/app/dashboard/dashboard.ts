@@ -6,13 +6,10 @@ import {
   inject,
   effect,
 } from '@angular/core';
-import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
 import { FinnhubQuoteService } from '../services/finnhub-quote.service';
-import { AgCharts } from 'ag-charts-angular';
 import { HeaderComponent } from '../components/header/header.component';
 import { LiveStockTickerComponent } from '../components/live-stock-ticker/live-stock-ticker.component';
-import { KpiBannerComponent } from '../components/kpi-banner/kpi-banner.component';
 import { PriceChartComponent } from '../components/price-chart/price-chart.component';
 import { RecentTransactionsComponent } from '../components/recent-transactions/recent-transactions.component';
 import { StockSummaryComponent } from '../components/stock-summary/stock-summary.component';
@@ -27,7 +24,6 @@ import { CompanySearcherComponent } from '../components/company-searcher/company
   imports: [
     HeaderComponent,
     LiveStockTickerComponent,
-    KpiBannerComponent,
     PriceChartComponent,
     RecentTransactionsComponent,
     StockSummaryComponent,

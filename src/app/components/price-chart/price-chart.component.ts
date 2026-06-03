@@ -11,8 +11,17 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { AgCharts } from 'ag-charts-angular';
+import { ModuleRegistry, CategoryAxisModule, LegendModule, LineSeriesModule, NumberAxisModule, TimeAxisModule } from 'ag-charts-community';
 import { StatPillComponent } from './stat-pill.component';
 import { StatPill } from '../../interfaces';
+
+ModuleRegistry.registerModules([
+  CategoryAxisModule,
+  LegendModule,
+  LineSeriesModule,
+  NumberAxisModule,
+  TimeAxisModule
+]);
 
 const POLL_MS = 5_000;
 const TICK_MS = 50;
