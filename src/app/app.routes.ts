@@ -9,6 +9,11 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./dashboard/dashboard').then((m) => m.Dashboard),
+      import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+  },
+  {
+    path: 'user',
+    loadComponent: () =>
+      import('./pages/user/user').then((m) => m.User),
   },
 ];

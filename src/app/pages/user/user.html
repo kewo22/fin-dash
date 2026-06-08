@@ -1,0 +1,113 @@
+<section aria-label="user crud">
+
+    <form class="flex flex-col gap-4" (submit)="onSubmit($event)">
+        <div class="flex flex-col">
+            <label for="username">Username</label>
+            <input id="username" pInputText [formField]="regForm.username" placeholder="Enter Username" type="text"
+                pSize="small" [class.p-invalid]="regForm.username().dirty() && regForm.username().invalid()" />
+
+            @if (regForm.username().dirty() && regForm.username().invalid()) {
+            <div class="mt-2">
+                @for (err of regForm.username().errors(); track err.kind) {
+                <p-message size="small" severity="error" variant="simple" [text]="err.message" />
+                }
+            </div>
+            }
+        </div>
+
+        <div class="flex flex-col">
+            <label for="email">Email Address</label>
+            <input id="email" pInputText [formField]="regForm.email" placeholder="Enter Email" type="text" pSize="small"
+                [class.p-invalid]="regForm.email().dirty() && regForm.email().invalid()" />
+
+            @if (regForm.email().dirty() && regForm.email().invalid()) {
+            <div class="mt-2">
+                @for (err of regForm.email().errors(); track err.kind) {
+                <p-message size="small" severity="error" variant="simple" [text]="err.message" />
+                }
+            </div>
+            }
+        </div>
+
+        <div class="flex flex-col">
+            <label for="email">Date of birth</label>
+            <p-datepicker [formField]="$any(regForm.dob)" dateFormat="dd/mm/yy" placeholder="Choose a date"
+                size="small" />
+        </div>
+
+        <div class="flex flex-col">
+            <label>Gender</label>
+            <div class="flex flex-row gap-4">
+                <div class="flex items-center">
+                    <p-radiobutton inputId="notSpecifyInput" value="notSpecify" [formField]="regForm.gender" />
+                    <label for="notSpecifyInput" class="ml-2">Prefer not to say!</label>
+                </div>
+
+                <div class="flex items-center">
+                    <p-radiobutton inputId="maleInput" value="male" [formField]="regForm.gender" />
+                    <label for="maleInput" class="ml-2">Male</label>
+                </div>
+
+                <div class="flex items-center">
+                    <p-radiobutton inputId="femaleInput" value="female" [formField]="regForm.gender" />
+                    <label for="femaleInput" class="ml-2">Female</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col">
+            <label for="addressLine1">Address Line 1</label>
+            <input id="addressLine1" pInputText [formField]="regForm.addressLine1" placeholder="Enter Address Line 1"
+                type="text" pSize="small"
+                [class.p-invalid]="regForm.addressLine1().dirty() && regForm.addressLine1().invalid()" />
+
+            @if (regForm.addressLine1().dirty() && regForm.addressLine1().invalid()) {
+            <div class="mt-2">
+                @for (err of regForm.addressLine1().errors(); track err.kind) {
+                <p-message size="small" severity="error" variant="simple" [text]="err.message" />
+                }
+            </div>
+            }
+        </div>
+
+        <div class="flex flex-col">
+            <label for="addressLine2">Address Line 2</label>
+            <input id="addressLine2" pInputText [formField]="regForm.addressLine2" placeholder="Enter Address Line 2"
+                type="text" pSize="small"
+                [class.p-invalid]="regForm.addressLine2().dirty() && regForm.addressLine2().invalid()" />
+
+            @if (regForm.addressLine2().dirty() && regForm.addressLine2().invalid()) {
+            <div class="mt-2">
+                @for (err of regForm.addressLine2().errors(); track err.kind) {
+                <p-message size="small" severity="error" variant="simple" [text]="err.message" />
+                }
+            </div>
+            }
+        </div>
+        <div class="flex flex-col">
+            <label for="cityDropdown">City</label>
+            <p-select id="cityDropdown" [options]="cities()" [formField]="$any(regForm.city)" optionLabel="name"
+                placeholder="Select a City" class="w-full" size="small" />
+        </div>
+
+
+        <div class=" flex flex-col">
+            <label for="password">Password</label>
+            <input id="password" pInputText [formField]="regForm.password" placeholder="Enter Password" type="password"
+                pSize="small" [class.p-invalid]="regForm.password().dirty() && regForm.password().invalid()" />
+
+            @if (regForm.password().dirty() && regForm.password().invalid()) {
+            <div class="mt-2">
+                @for (err of regForm.password().errors(); track err.kind) {
+                <p-message size="small" severity="error" variant="simple" [text]="err.message" />
+                }
+            </div>
+            }
+        </div>
+
+
+
+        <p-button type="submit" [disabled]="regForm().invalid()" label="Register" size="small" />
+    </form>
+
+</section>

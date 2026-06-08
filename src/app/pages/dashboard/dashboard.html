@@ -1,0 +1,40 @@
+<section aria-label="dashboard overview">
+  <div class="flex items-start justify-between mb-7">
+    <h1 class="text-2xl font-bold text-gray-900 leading-tight">Live Overview</h1>
+  </div>
+
+  <app-live-stock-ticker [wsStatus]="wsStatus()" [stockQuotes]="stockQuotes()" [topGainers]="topGainers()" />
+
+  <!-- <app-kpi-banner
+      [balance]="kpiBalance()"
+      [balanceChange]="kpiBalanceChange()"
+      [income]="kpiIncome()"
+      [expense]="kpiExpense()"
+      [tax]="kpiTax()" /> -->
+
+  <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6">
+
+    <div class="flex flex-col gap-6 min-w-0">
+
+      <!-- Real-Time Price Chart -->
+      <app-price-chart [symbols]="chartSymbols" [symbol]="quoteService.symbol()" [quote]="quote()"
+        [chartLoading]="chartLoading()" [chartError]="chartError()" [chartOptions]="chartOptions()"
+        [chartHistoryLength]="quoteService.chartHistory().length" (symbolChange)="setChartSymbol($event)" />
+
+      <!-- Recent Transactions Table Placeholder -->
+      <app-recent-transactions [selectedDate]="selectedDate()" [transactions]="transactions()" />
+
+    </div>
+
+    <div class="flex flex-col gap-6">
+
+      <!-- Total All Stock Product (Dark Card) -->
+      <app-stock-summary [available]="stockAvailable()" [soldOut]="stockSoldOut()" [total]="stockTotal()"
+        [progressPct]="stockProgressPct()" />
+
+      <app-company-searcher />
+
+    </div>
+
+  </div>
+</section>

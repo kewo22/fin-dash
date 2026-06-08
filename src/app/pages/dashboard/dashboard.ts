@@ -5,24 +5,23 @@ import {
   computed,
   inject,
   effect,
+  OnDestroy,
 } from '@angular/core';
-import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
-import { FinnhubQuoteService } from '../services/finnhub-quote.service';
-import { HeaderComponent } from '../components/header/header.component';
-import { LiveStockTickerComponent } from '../components/live-stock-ticker/live-stock-ticker.component';
-import { PriceChartComponent } from '../components/price-chart/price-chart.component';
-import { RecentTransactionsComponent } from '../components/recent-transactions/recent-transactions.component';
-import { StockSummaryComponent } from '../components/stock-summary/stock-summary.component';
+import { FinnhubRealtimeService } from '../../services/finnhub-realtime.service';
+import { FinnhubQuoteService } from '../../services/finnhub-quote.service';
+import { LiveStockTickerComponent } from '../../components/live-stock-ticker/live-stock-ticker.component';
+import { PriceChartComponent } from '../../components/price-chart/price-chart.component';
+import { RecentTransactionsComponent } from '../../components/recent-transactions/recent-transactions.component';
+import { StockSummaryComponent } from '../../components/stock-summary/stock-summary.component';
 
-import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '../models/dashboard.models';
-import { CompanySearcherComponent } from '../components/company-searcher/company-searcher.component';
+import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '../../models/dashboard.models';
+import { CompanySearcherComponent } from '../../components/company-searcher/company-searcher.component';
 
-// ─── Component ────────────────────────────────────────────────────────────────
+const DEFAULT_SYMBOLS = ['AMZN', 'MSFT', 'BINANCE:BTCUSDT', 'AAPL'] as const;
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    HeaderComponent,
     LiveStockTickerComponent,
     PriceChartComponent,
     RecentTransactionsComponent,
@@ -33,7 +32,7 @@ import { CompanySearcherComponent } from '../components/company-searcher/company
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard {
+export class Dashboard implements OnDestroy {
   private readonly finnhub = inject(FinnhubRealtimeService);
   readonly quoteService = inject(FinnhubQuoteService);
 
@@ -48,7 +47,31 @@ export class Dashboard {
   // ── Internal price state (symbol → latest + previous price) ───────────────
   private readonly priceState = signal<Record<string, PriceState>>({});
 
+
   constructor() {
+
+    // Kick off the WebSocket connection immediately.
+    this.finnhub.connect();
+
+    // Subscribe to default symbols once the connection is established.
+    effect(() => {
+      if (this.finnhub.status() === 'connected') {
+        DEFAULT_SYMBOLS.forEach((sym) => this.finnhub.subscribe(sym));
+      }
+    });
+
+    // Log connection state changes for observability.
+    effect(() => {
+      const status = this.finnhub.status();
+      const err = this.finnhub.wsError();
+      if (err) {
+        console.error('[App] Finnhub error:', err);
+      } else {
+        console.log('[App] Finnhub status →', status);
+      }
+    });
+
+
     // React to batched trade ticks from the service and update price state.
     effect(() => {
       const trades = this.finnhub.lastTrades();
@@ -222,5 +245,9 @@ export class Dashboard {
 
   setChartSymbol(symbol: string): void {
     this.quoteService.setSymbol(symbol);
+  }
+
+  ngOnDestroy(): void {
+    this.finnhub.disconnect();
   }
 }
