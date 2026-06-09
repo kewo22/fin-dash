@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -15,8 +15,9 @@ import {
   minLength,
   validate
 } from '@angular/forms/signals';
-import { City } from '../../interfaces';
-
+import { City, CreateUser, } from '../../interfaces';
+import { UserService } from '../../services/user.service';
+import { UserTable } from '../../components/user-table/user-table';
 
 const ukCities: City[] = [
   // England
@@ -106,25 +107,31 @@ const ukCities: City[] = [
 
 @Component({
   selector: 'app-user',
-  imports: [CommonModule, FormField, InputTextModule, ButtonModule, MessageModule, DatePickerModule, RadioButtonModule, SelectModule],
+  imports: [CommonModule, FormField, InputTextModule, ButtonModule, MessageModule, DatePickerModule, RadioButtonModule, SelectModule, UserTable],
   templateUrl: './user.html',
   styleUrl: './user.css',
 })
 export class User {
+  protected userService = inject(UserService);
+
+  public listUsersResource = this.userService.listUsers;
 
   protected cities = signal<City[]>([
     ...ukCities
   ]);
 
-  protected userModel = signal({
+  protected userModel = signal<CreateUser>({
     username: '',
     email: '',
     password: '',
-    dob: '',
+    dob: new Date(),
     gender: 'notSpecify',
     addressLine1: '',
     addressLine2: '',
-    city: null
+    city: {
+      name: '',
+      code: ''
+    },
   });
 
   protected regForm = form(this.userModel, (fields) => {
@@ -165,6 +172,8 @@ export class User {
     // Extracting the final data payload directly from your model signal
     const payload = this.userModel();
     console.log('Successfully submitted payload:', payload);
+
+    this.userService.createUser(payload);
   }
 
 }

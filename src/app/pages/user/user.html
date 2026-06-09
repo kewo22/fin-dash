@@ -1,6 +1,6 @@
-<section aria-label="user crud">
+<section class="flex flex-row gap-4" aria-label="user crud">
 
-    <form class="flex flex-col gap-4" (submit)="onSubmit($event)">
+    <form class="w-1/2 flex flex-col gap-4" (submit)="onSubmit($event)">
         <div class="flex flex-col">
             <label for="username">Username</label>
             <input id="username" pInputText [formField]="regForm.username" placeholder="Enter Username" type="text"
@@ -109,5 +109,10 @@
 
         <p-button type="submit" [disabled]="regForm().invalid()" label="Register" size="small" />
     </form>
+
+    <div class="w-1/2">
+        <app-user-table [users]="listUsersResource.value()" [isLoading]="listUsersResource.isLoading()"
+            [error]="listUsersResource.error()" />
+    </div>
 
 </section>
