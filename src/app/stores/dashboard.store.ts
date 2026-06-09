@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { FinnhubRealtimeService } from '../services/finnhub-realtime.service';
-import { Transaction, Employee, StockQuote, WatchlistEntry, PriceState } from '../interfaces';
+import { Transaction, Employee, StockQuote, WatchlistEntry } from '../interfaces';
 import { FinnhubQuoteService } from '../services/finnhub-quote.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class DashboardStore {
   ]);
 
   // ── Internal price state (symbol → latest + previous price) ───────────────
-  private readonly priceState = signal<Record<string, PriceState>>({});
+  private readonly priceState = this.finnhub.priceState;
 
   // Real-time WS
   readonly wsStatus = this.finnhub.status;
@@ -96,27 +96,7 @@ export class DashboardStore {
   // ── UI State ──────────────────────────────────────────────────────────────
   readonly selectedDate = signal('Mar 25, 2024');
 
-  constructor() {
-    // React to batched trade ticks from the service and update price state.
-    effect(() => {
-      const trades = this.finnhub.lastTrades();
-      if (!trades.length) return;
-
-      this.priceState.update((state) => {
-        const next: Record<string, PriceState> = { ...state };
-        for (const trade of trades) {
-          const prev = next[trade.symbol];
-          next[trade.symbol] = {
-            current: trade.price,
-            previous: prev?.current ?? trade.price,
-            volume: trade.volume,
-            timestamp: trade.timestamp,
-          };
-        }
-        return next;
-      });
-    });
-  }
+  constructor() {}
 
   // Connects WebSocket and subscribes to watchlist
   initRealtime() {

@@ -1,10 +1,8 @@
 import { Injectable, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, filter, auditTime } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Subject, filter, auditTime, scan } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { TradeDto, ConnectionStatus } from '../interfaces';
-
-// ─── Private DTOs ─────────────────────────────────────────────────────────────
+import { ConnectionStatus, PriceState } from '../interfaces';
 
 /** Raw trade object as received from Finnhub WebSocket. */
 interface FinnhubRawTrade {
@@ -20,8 +18,6 @@ interface FinnhubRawMessage {
   readonly data?: FinnhubRawTrade[];
   readonly msg?: string;
 }
-
-// ─── Service ──────────────────────────────────────────────────────────────────
 
 /**
  * Manages the Finnhub WebSocket connection.
@@ -44,30 +40,30 @@ export class FinnhubRealtimeService {
 
   // ── Public signals ──────────────────────────────────────────────────────────
   readonly status = signal<ConnectionStatus>('disconnected');
-  readonly lastTrades = signal<TradeDto[]>([]);
   readonly wsError = signal<string | null>(null);
 
-  constructor() {
-    // Pipe all raw messages through a 500 ms audit window to prevent
-    // excessive signal updates from high-frequency ticks.
-    this.rawMessage$
-      .pipe(
-        filter((msg) => msg.type === 'trade' && !!msg.data?.length),
-        auditTime(500),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((msg) => {
-        const trades = (msg.data ?? []).map<TradeDto>((raw) => ({
-          price: raw.p,
-          symbol: raw.s,
-          timestamp: raw.t,
+  private readonly trade$ = this.rawMessage$.pipe(
+    filter((msg) => msg.type === 'trade' && !!msg.data?.length),
+    auditTime(500),
+    scan((state, msg) => {
+      const next = { ...state };
+      for (const raw of msg.data ?? []) {
+        const prev = next[raw.s];
+        next[raw.s] = {
+          current: raw.p,
+          previous: prev?.current ?? raw.p,
           volume: raw.v,
-        }));
+          timestamp: raw.t,
+        };
+      }
+      return next;
+    }, {} as Record<string, PriceState>),
+    takeUntilDestroyed(this.destroyRef),
+  );
 
-        this.lastTrades.set(trades);
+  readonly priceState = toSignal(this.trade$, { initialValue: {} as Record<string, PriceState> });
 
-        console.log('[FinnhubRealtimeService] 📊 Trade tick:', trades);
-      });
+  constructor() {
 
     // Tear down WebSocket when the app is destroyed.
     this.destroyRef.onDestroy(() => this.disconnect());
