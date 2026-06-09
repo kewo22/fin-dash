@@ -96,18 +96,18 @@ export class DashboardStore {
   // ── UI State ──────────────────────────────────────────────────────────────
   readonly selectedDate = signal('Mar 25, 2024');
 
-  constructor() {}
-
-  // Connects WebSocket and subscribes to watchlist
-  initRealtime() {
-    this.finnhub.connect();
-
-    // Once connected, subscribe to all symbols
+  constructor() {
+    // Subscribe to all watchlist symbols once the WebSocket connects.
     effect(() => {
       if (this.finnhub.status() === 'connected') {
         this.watchlist().forEach((entry) => this.finnhub.subscribe(entry.symbol));
       }
     });
+  }
+
+  // Connects WebSocket; symbol subscription is handled reactively in the constructor effect.
+  initRealtime() {
+    this.finnhub.connect();
   }
 
   destroy() {
