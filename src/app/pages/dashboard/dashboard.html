@@ -17,9 +17,9 @@
     <div class="flex flex-col gap-6 min-w-0">
 
       <!-- Real-Time Price Chart -->
-      <app-price-chart [symbols]="chartSymbols" [symbol]="quoteService.symbol()" [quote]="quote()"
+      <app-price-chart [symbols]="chartSymbols" [symbol]="chartSymbol()" [quote]="quote()"
         [chartLoading]="chartLoading()" [chartError]="chartError()" [chartOptions]="chartOptions()"
-        [chartHistoryLength]="quoteService.chartHistory().length" (symbolChange)="setChartSymbol($event)" />
+        [chartHistoryLength]="chartHistoryLength()" (symbolChange)="setChartSymbol($event)" />
 
       <!-- Recent Transactions Table Placeholder -->
       <app-recent-transactions [selectedDate]="selectedDate()" [transactions]="transactions()" />
