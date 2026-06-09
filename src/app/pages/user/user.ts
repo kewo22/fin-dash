@@ -15,7 +15,7 @@ import {
   minLength,
   validate
 } from '@angular/forms/signals';
-import { City, CreateUser, } from '../../interfaces';
+import { City, UserFormModel } from '../../interfaces';
 import { UserService } from '../../services/user.service';
 import { UserTable } from '../../components/user-table/user-table';
 
@@ -120,7 +120,7 @@ export class User {
     ...ukCities
   ]);
 
-  protected userModel = signal<CreateUser>({
+  protected userModel = signal<UserFormModel>({
     username: '',
     email: '',
     password: '',
@@ -169,8 +169,8 @@ export class User {
       return;
     }
 
-    // Extracting the final data payload directly from your model signal
-    const payload = this.userModel();
+    const { dob, ...rest } = this.userModel();
+    const payload = { ...rest, dob: dob.toISOString() };
     console.log('Successfully submitted payload:', payload);
 
     this.userService.createUser(payload);

@@ -7,7 +7,8 @@
 }
 
 @if (isLoading()) {
-<p-table [value]="[1,2,3,4,5,6,7,8,9,10]" [rows]="10" aria-label="Loading users">
+<p-table [scrollable]="true" scrollHeight="flex" [value]="[1,2,3,4,5,6,7,8,9,10]" [rows]="10"
+    aria-label="Loading users">
     <ng-template #header>
         <tr>
             <th scope="col">Username</th>
@@ -28,42 +29,42 @@
     </ng-template>
 </p-table>
 } @else {
-<p-table [value]="users() ?? []" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 25]"
-    [sortMode]="'multiple'" [tableStyle]="{'min-width': '100%'}" class="p-datatable-sm p-datatable-striped"
-    aria-label="Users table">
+<p-table [scrollable]="true" scrollHeight="flex" [value]="users() ?? []" [paginator]="true" [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 25]" [sortMode]="'multiple'" [tableStyle]="{'min-width': '100%'}"
+    class="p-datatable-sm p-datatable-striped" aria-label="Users table">
     <ng-template #header>
         <tr>
-            <th scope="col" pSortableColumn="username">
-                Username <p-sortIcon field="username" />
+            <th class="text-sm" scope="col" pSortableColumn="username">
+                Username <p-sortIcon field="username" class="scale-75" />
             </th>
-            <th scope="col" pSortableColumn="email">
-                Email <p-sortIcon field="email" />
+            <th class="text-sm" scope="col" pSortableColumn="email">
+                Email <p-sortIcon field="email" class="scale-75" />
             </th>
-            <th scope="col" pSortableColumn="gender">
-                Gender <p-sortIcon field="gender" />
+            <th class="text-sm" scope="col" pSortableColumn="gender">
+                Gender <p-sortIcon field="gender" class="scale-75" />
             </th>
-            <th scope="col" pSortableColumn="city">
-                City <p-sortIcon field="city" />
+            <th class="text-sm" scope="col" pSortableColumn="city">
+                City <p-sortIcon field="city" class="scale-75" />
             </th>
-            <th scope="col" pSortableColumn="dob">
-                Date of Birth <p-sortIcon field="dob" />
+            <th class="text-sm" scope="col" pSortableColumn="dob">
+                Date of Birth <p-sortIcon field="dob" class="scale-75" />
             </th>
         </tr>
     </ng-template>
     <ng-template #body let-user>
         <tr>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <p-tag [value]="user.gender"
+            <td class="text-sm">{{ user.username }}</td>
+            <td class="text-sm">{{ user.email }}</td>
+            <td class="text-sm">
+                <p-tag [value]="user.gender | generToValue"
                     [severity]="user.gender === 'male' ? 'info' : user.gender === 'female' ? 'success' : 'secondary'" />
             </td>
-            <td>{{ user.city.name }}</td>
-            <td>{{ user.dob }}</td>
+            <td class="text-sm">{{ user.city.name }}</td>
+            <td class="text-sm">{{ user.dob | date: 'dd/MM/yyyy'}}</td>
         </tr>
     </ng-template>
     <ng-template #emptymessage>
-        <tr>
+        <tr rowspan="10">
             <td colspan="5" class="text-center text-gray-400 py-8">No users found.</td>
         </tr>
     </ng-template>

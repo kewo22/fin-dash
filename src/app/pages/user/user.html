@@ -110,9 +110,9 @@
         <p-button type="submit" [disabled]="regForm().invalid()" label="Register" size="small" />
     </form>
 
-    <div class="w-1/2">
-        <app-user-table [users]="listUsersResource.value()" [isLoading]="listUsersResource.isLoading()"
-            [error]="listUsersResource.error()" />
+    <div class="w-1/2 min-h-[624px] block">
+        <app-user-table class="min-h-[624px] block h-full" [users]="listUsersResource.value()"
+            [isLoading]="listUsersResource.isLoading()" [error]="listUsersResource.error()" />
     </div>
 
 </section>
