@@ -19,7 +19,7 @@ if (fs.existsSync(envPath)) {
 function require_env(key) {
   const val = process.env[key];
   if (!val) throw new Error(`Missing required environment variable: ${key}`);
-  return val;
+  return val.trim();
 }
 
 const isProduction = process.env['NODE_ENV'] === 'production';
