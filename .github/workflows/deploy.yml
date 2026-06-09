@@ -36,7 +36,15 @@ jobs:
       - name: Build
         run: npm run build -- --configuration production
 
-      # 6. Configure AWS credentials
+      # 6. Pre-compress JS and CSS assets with gzip
+      - name: Compress assets
+        run: |
+          find dist/fin-dash/browser -type f \( -name "*.js" -o -name "*.css" \) | while read f; do
+            gzip -9 -k "$f"
+            mv "${f}.gz" "$f"
+          done
+
+      # 7. Configure AWS credentials
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: aws-actions/configure-aws-credentials@v4
@@ -45,16 +53,35 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 7. Sync build output to S3
+      # 8. Sync build output to S3
       - name: Deploy to S3
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
+          # Upload compressed JS files with Content-Encoding header
           aws s3 sync dist/fin-dash/browser/ s3://${{ secrets.S3_BUCKET }} \
             --delete \
+            --exclude "*" \
+            --include "*.js" \
             --cache-control "public, max-age=31536000, immutable" \
-            --exclude "index.html"
-          
-          # index.html should NOT be cached
+            --content-encoding gzip \
+            --content-type "application/javascript"
+
+          # Upload compressed CSS files with Content-Encoding header
+          aws s3 sync dist/fin-dash/browser/ s3://${{ secrets.S3_BUCKET }} \
+            --exclude "*" \
+            --include "*.css" \
+            --cache-control "public, max-age=31536000, immutable" \
+            --content-encoding gzip \
+            --content-type "text/css"
+
+          # Upload all remaining assets (images, fonts, etc.) without compression
+          aws s3 sync dist/fin-dash/browser/ s3://${{ secrets.S3_BUCKET }} \
+            --exclude "*.js" \
+            --exclude "*.css" \
+            --exclude "index.html" \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # index.html must never be cached
           aws s3 cp dist/fin-dash/browser/index.html s3://${{ secrets.S3_BUCKET }}/index.html \
             --cache-control "no-cache, no-store, must-revalidate"
 

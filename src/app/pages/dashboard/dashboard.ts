@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnDestroy,
+  afterNextRender,
 } from '@angular/core';
 import { LiveStockTickerComponent } from '../../components/live-stock-ticker/live-stock-ticker.component';
 import { PriceChartComponent } from '../../components/price-chart/price-chart.component';
@@ -56,7 +57,7 @@ export class Dashboard implements OnDestroy {
   readonly chartSymbols = ['AAPL', 'AMZN', 'MSFT', 'GOOGL', 'TSLA'] as const;
 
   constructor() {
-    this.store.initRealtime();
+    afterNextRender(() => this.store.initRealtime());
   }
 
   setChartSymbol(symbol: string): void {
