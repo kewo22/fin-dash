@@ -1,3 +1,4 @@
+@defer (on viewport) {
 <section aria-label="dashboard overview">
   <div class="flex items-start justify-between mb-7">
     <h1 class="text-2xl font-bold text-gray-900 leading-tight">Live Overview</h1>
@@ -38,3 +39,21 @@
 
   </div>
 </section>
+} @placeholder {
+<div class="flex flex-col gap-5">
+  <div class="grid grid-cols-4 gap-5">
+    <p-skeleton height="136px" borderRadius="16px" />
+    <p-skeleton height="136px" borderRadius="16px" />
+    <p-skeleton height="136px" borderRadius="16px" />
+    <p-skeleton height="136px" borderRadius="16px" />
+  </div>
+  <div class="grid grid-cols-2 gap-5">
+    <p-skeleton height="136px" borderRadius="16px" />
+    <p-skeleton height="136px" borderRadius="16px" />
+  </div>
+  <div class="grid grid-cols-[75%_25%] gap-5">
+    <p-skeleton height="136px" borderRadius="16px" />
+    <p-skeleton height="136px" borderRadius="16px" />
+  </div>
+</div>
+}

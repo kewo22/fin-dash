@@ -11,6 +11,7 @@ import { RecentTransactionsComponent } from '../../components/recent-transaction
 import { StockSummaryComponent } from '../../components/stock-summary/stock-summary.component';
 import { CompanySearcherComponent } from '../../components/company-searcher/company-searcher.component';
 import { DashboardStore } from '../../stores/dashboard.store';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,8 @@ import { DashboardStore } from '../../stores/dashboard.store';
     PriceChartComponent,
     RecentTransactionsComponent,
     StockSummaryComponent,
-    CompanySearcherComponent
+    CompanySearcherComponent,
+    SkeletonModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
