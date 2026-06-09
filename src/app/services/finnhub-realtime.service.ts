@@ -2,22 +2,9 @@ import { Injectable, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Subject, filter, auditTime, scan } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ConnectionStatus, PriceState } from '../interfaces';
+import { ConnectionStatus, FinnhubRawMessage, PriceState } from '../interfaces';
 
-/** Raw trade object as received from Finnhub WebSocket. */
-interface FinnhubRawTrade {
-  readonly p: number; // price
-  readonly s: string; // symbol
-  readonly t: number; // timestamp (epoch ms)
-  readonly v: number; // volume
-}
 
-/** Raw envelope from Finnhub WebSocket. */
-interface FinnhubRawMessage {
-  readonly type: 'trade' | 'ping' | 'error';
-  readonly data?: FinnhubRawTrade[];
-  readonly msg?: string;
-}
 
 /**
  * Manages the Finnhub WebSocket connection.

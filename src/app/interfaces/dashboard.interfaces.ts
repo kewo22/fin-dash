@@ -50,3 +50,18 @@ export interface StatPill {
   /** Extra host class on the pill wrapper (e.g. 'col-span-2 sm:col-span-1'). */
   wrapperClass?: string;
 }
+
+/** Raw trade object as received from Finnhub WebSocket. */
+export interface FinnhubRawTrade {
+  readonly p: number; // price
+  readonly s: string; // symbol
+  readonly t: number; // timestamp (epoch ms)
+  readonly v: number; // volume
+}
+
+/** Raw envelope from Finnhub WebSocket. */
+export interface FinnhubRawMessage {
+  readonly type: 'trade' | 'ping' | 'error';
+  readonly data?: FinnhubRawTrade[];
+  readonly msg?: string;
+}

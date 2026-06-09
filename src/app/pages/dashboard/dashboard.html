@@ -18,8 +18,8 @@
 
       <!-- Real-Time Price Chart -->
       <app-price-chart [symbols]="chartSymbols" [symbol]="chartSymbol()" [quote]="quote()"
-        [chartLoading]="chartLoading()" [chartError]="chartError()" [chartOptions]="chartOptions()"
-        [chartHistoryLength]="chartHistoryLength()" (symbolChange)="setChartSymbol($event)" />
+        [chartLoading]="chartLoading()" [chartError]="chartError()" [chartHistory]="chartHistory()"
+        (symbolChange)="setChartSymbol($event)" />
 
       <!-- Recent Transactions Table Placeholder -->
       <app-recent-transactions [selectedDate]="selectedDate()" [transactions]="transactions()" />
