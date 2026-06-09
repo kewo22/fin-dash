@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>FinDash</title>
@@ -7,16 +8,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
+
 <body>
   <app-root>
+
     <!-- Skeleton shown until Angular bootstraps -->
-    <div id="app-shell" aria-hidden="true" style="display:flex;flex-direction:column;min-height:100vh;background:#f4f6f4;font-family:Inter,system-ui,sans-serif;">
-      <div style="height:64px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 24px;gap:12px;">
+    <div id="app-shell" aria-hidden="true"
+      style="display:flex;flex-direction:column;min-height:100vh;background:#f4f6f4;font-family:Inter,system-ui,sans-serif;">
+      <div
+        style="height:64px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 24px;gap:12px;">
         <div class="sk" style="width:100px;height:20px;border-radius:6px;"></div>
         <div style="flex:1"></div>
         <div class="sk" style="width:32px;height:32px;border-radius:50%;"></div>
       </div>
-      <div style="max-width:1440px;width:100%;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:24px;">
+      <div
+        style="max-width:1440px;width:100%;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:24px;">
         <div style="display:flex;gap:12px;">
           <div class="sk" style="flex:1;height:72px;border-radius:12px;"></div>
           <div class="sk" style="flex:1;height:72px;border-radius:12px;"></div>
@@ -31,9 +37,24 @@
       </div>
     </div>
     <style>
-      .sk { background:#e5e7eb; animation:sk-pulse 1.6s ease-in-out infinite; }
-      @keyframes sk-pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+      .sk {
+        background: #e5e7eb;
+        animation: sk-pulse 1.6s ease-in-out infinite;
+      }
+
+      @keyframes sk-pulse {
+
+        0%,
+        100% {
+          opacity: 1
+        }
+
+        50% {
+          opacity: .4
+        }
+      }
     </style>
   </app-root>
 </body>
+
 </html>
