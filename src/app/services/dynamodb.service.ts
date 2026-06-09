@@ -8,8 +8,8 @@ import {
     DeleteCommand,
     UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
-import { environment } from '../../environments/environment';
 import { v4 as uuidv4 } from 'uuid';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DynamodbService {
