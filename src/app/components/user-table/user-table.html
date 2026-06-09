@@ -1,3 +1,5 @@
+<p-confirmdialog />
+
 @if (error()) {
 <div class="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
     role="alert">
@@ -7,8 +9,7 @@
 }
 
 @if (isLoading()) {
-<p-table [scrollable]="true" scrollHeight="flex" [value]="[1,2,3,4,5,6,7,8,9,10]" [rows]="10"
-    aria-label="Loading users">
+<p-table [value]="skeletonRows" [rows]="10" aria-label="Loading users">
     <ng-template #header>
         <tr>
             <th scope="col">Username</th>
@@ -16,21 +17,22 @@
             <th scope="col">Gender</th>
             <th scope="col">City</th>
             <th scope="col">Date of Birth</th>
+            <th scope="col">Actions</th>
         </tr>
     </ng-template>
-    <ng-template #body let-row>
+    <ng-template #body>
         <tr>
             <td><p-skeleton height="1rem" /></td>
             <td><p-skeleton height="1rem" /></td>
             <td><p-skeleton height="1rem" width="4rem" /></td>
             <td><p-skeleton height="1rem" width="5rem" /></td>
             <td><p-skeleton height="1rem" width="6rem" /></td>
+            <td><p-skeleton height="1rem" width="4rem" /></td>
         </tr>
     </ng-template>
 </p-table>
 } @else {
-<p-table [scrollable]="true" scrollHeight="flex" [value]="users() ?? []" [paginator]="true" [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 25]" [sortMode]="'multiple'" [tableStyle]="{'min-width': '100%'}"
+<p-table [value]="users() ?? []" [rows]="10" [sortMode]="'multiple'" [tableStyle]="{'min-width': '100%'}"
     class="p-datatable-sm p-datatable-striped" aria-label="Users table">
     <ng-template #header>
         <tr>
@@ -43,12 +45,13 @@
             <th class="text-sm" scope="col" pSortableColumn="gender">
                 Gender <p-sortIcon field="gender" class="scale-75" />
             </th>
-            <th class="text-sm" scope="col" pSortableColumn="city">
-                City <p-sortIcon field="city" class="scale-75" />
+            <th class="text-sm" scope="col" pSortableColumn="city.name">
+                City <p-sortIcon field="city.name" class="scale-75" />
             </th>
             <th class="text-sm" scope="col" pSortableColumn="dob">
                 Date of Birth <p-sortIcon field="dob" class="scale-75" />
             </th>
+            <th class="text-sm" scope="col">Actions</th>
         </tr>
     </ng-template>
     <ng-template #body let-user>
@@ -60,13 +63,94 @@
                     [severity]="user.gender === 'male' ? 'info' : user.gender === 'female' ? 'success' : 'secondary'" />
             </td>
             <td class="text-sm">{{ user.city.name }}</td>
-            <td class="text-sm">{{ user.dob | date: 'dd/MM/yyyy'}}</td>
+            <td class="text-sm">{{ user.dob | date: 'dd/MM/yyyy' }}</td>
+            <td>
+                <div class="flex gap-1">
+                    <p-button icon="pi pi-pencil" size="small" severity="secondary" [text]="true" [rounded]="true"
+                        (onClick)="openEdit(user)" [attr.aria-label]="'Edit ' + user.username" />
+                    <p-button icon="pi pi-trash" size="small" severity="danger" [text]="true" [rounded]="true"
+                        (onClick)="confirmDelete(user)" [attr.aria-label]="'Delete ' + user.username" />
+                </div>
+            </td>
         </tr>
     </ng-template>
     <ng-template #emptymessage>
-        <tr rowspan="10">
-            <td colspan="5" class="text-center text-gray-400 py-8">No users found.</td>
+        <tr>
+            <td colspan="6" class="text-center text-gray-400 py-8">No users found.</td>
         </tr>
     </ng-template>
 </p-table>
 }
+
+<!-- Edit Dialog -->
+<p-dialog [visible]="!!editingUserId()" (visibleChange)="!$event && closeEdit()" header="Edit User" [modal]="true"
+    [style]="{ width: '32rem' }" [draggable]="false">
+
+    @if (editDraft(); as draft) {
+    <div class="flex flex-col gap-4">
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-username" class="text-sm font-medium">Username</label>
+            <input id="edit-username" pInputText [value]="draft.username" size="small"
+                (input)="patchDraft({ username: $any($event.target).value })" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-email" class="text-sm font-medium">Email</label>
+            <input id="edit-email" pInputText [value]="draft.email" size="small" type="email"
+                (input)="patchDraft({ email: $any($event.target).value })" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium">Gender</label>
+            <div class="flex gap-4">
+                <div class="flex items-center gap-2">
+                    <p-radiobutton inputId="edit-not-specify" name="edit-gender" value="notSpecify"
+                        [ngModel]="draft.gender" (ngModelChange)="patchDraft({ gender: $event })" />
+                    <label for="edit-not-specify" class="text-sm">Not specified</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <p-radiobutton inputId="edit-male" name="edit-gender" value="male" [ngModel]="draft.gender"
+                        (ngModelChange)="patchDraft({ gender: $event })" />
+                    <label for="edit-male" class="text-sm">Male</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <p-radiobutton inputId="edit-female" name="edit-gender" value="female" [ngModel]="draft.gender"
+                        (ngModelChange)="patchDraft({ gender: $event })" />
+                    <label for="edit-female" class="text-sm">Female</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-dob" class="text-sm font-medium">Date of Birth</label>
+            <p-datepicker inputId="edit-dob" [ngModel]="draft.dob" (ngModelChange)="patchDraft({ dob: $event })"
+                dateFormat="dd/mm/yy" size="small" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-address1" class="text-sm font-medium">Address Line 1</label>
+            <input id="edit-address1" pInputText [value]="draft.addressLine1" size="small"
+                (input)="patchDraft({ addressLine1: $any($event.target).value })" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-address2" class="text-sm font-medium">Address Line 2</label>
+            <input id="edit-address2" pInputText [value]="draft.addressLine2" size="small"
+                (input)="patchDraft({ addressLine2: $any($event.target).value })" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label for="edit-city" class="text-sm font-medium">City</label>
+            <p-select inputId="edit-city" [options]="cities" [ngModel]="draft.city"
+                (ngModelChange)="patchDraft({ city: $event })" optionLabel="name" size="small" class="w-full" />
+        </div>
+
+    </div>
+    }
+
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [outlined]="true" size="small" (onClick)="closeEdit()" />
+        <p-button label="Save" size="small" [loading]="isSaving()" (onClick)="saveEdit()" />
+    </ng-template>
+</p-dialog>

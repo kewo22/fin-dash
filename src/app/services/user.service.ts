@@ -7,7 +7,7 @@ import { CreateUser, User } from '../interfaces';
 export class UserService {
     private db = inject(DynamodbService);
 
-    public listUsers = resource<User[], unknown>({
+    public userResource = resource<User[], unknown>({
         loader: async () => {
             return await this.db.getAll<User>();
         }
@@ -21,7 +21,7 @@ export class UserService {
         this.createError.set(null);
         try {
             const createdUser = await this.db.create(user);
-            this.listUsers.update(currentUsers =>
+            this.userResource.update(currentUsers =>
                 currentUsers ? [...currentUsers, createdUser as User] : [createdUser as User]
             );
             this.createStatus.set('success');
@@ -31,4 +31,15 @@ export class UserService {
         }
     }
 
+    async updateUser(id: string, updates: Partial<CreateUser>): Promise<void> {
+        await this.db.update(id, updates);
+        this.userResource.reload();
+    }
+
+    async deleteUser(id: string): Promise<void> {
+        await this.db.delete(id);
+        this.userResource.value.update(currentTasks =>
+            currentTasks ? currentTasks.filter(t => t.id !== id) : []
+        );
+    }
 }
