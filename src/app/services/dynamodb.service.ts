@@ -20,8 +20,8 @@ export class DynamodbService {
         const dynamo = new DynamoDBClient({
             region: environment.aws.region,
             credentials: {
-                accessKeyId: environment.aws.accessKeyId,
-                secretAccessKey: environment.aws.secretAccessKey,
+                accessKeyId: environment.aws.accessKeyIdDyDb,
+                secretAccessKey: environment.aws.secretAccessKeyDyDb,
             },
         });
         this.client = DynamoDBDocumentClient.from(dynamo);

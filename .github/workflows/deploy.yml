@@ -35,6 +35,14 @@ jobs:
       # 5. Build for production
       - name: Build
         run: npm run build -- --configuration production
+        env:
+          NODE_ENV: production
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          FINNHUB_WS_URL: ${{ secrets.FINNHUB_WS_URL }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID_DY_DB: ${{ secrets.AWS_ACCESS_KEY_ID_DY_DB }}
+          AWS_SECRET_ACCESS_KEY_DY_DB: ${{ secrets.AWS_SECRET_ACCESS_KEY_DY_DB }}
+          AWS_TABLE_NAME: ${{ secrets.AWS_TABLE_NAME }}
 
       # 6. Pre-compress JS and CSS assets with gzip
       - name: Compress assets
