@@ -24,16 +24,18 @@ function require_env(key) {
 
 const isProduction = process.env['NODE_ENV'] === 'production';
 
+const s = (key) => JSON.stringify(require_env(key));
+
 const content = `// AUTO-GENERATED — do not edit. Run "node scripts/set-env.js" to regenerate.
 export const environment = {
   production: ${isProduction},
-  finnhubApiKey: '${require_env('FINNHUB_API_KEY')}',
-  finnhubWsUrl: '${require_env('FINNHUB_WS_URL')}',
+  finnhubApiKey: ${s('FINNHUB_API_KEY')},
+  finnhubWsUrl: ${s('FINNHUB_WS_URL')},
   aws: {
-    region: '${require_env('AWS_REGION')}',
-    accessKeyIdDyDb: '${require_env('AWS_ACCESS_KEY_ID_DY_DB')}',
-    secretAccessKeyDyDb: '${require_env('AWS_SECRET_ACCESS_KEY_DY_DB')}',
-    tableName: '${require_env('AWS_TABLE_NAME')}',
+    region: ${s('AWS_REGION')},
+    accessKeyIdDyDb: ${s('AWS_ACCESS_KEY_ID_DY_DB')},
+    secretAccessKeyDyDb: ${s('AWS_SECRET_ACCESS_KEY_DY_DB')},
+    tableName: ${s('AWS_TABLE_NAME')},
   },
 };
 `;
