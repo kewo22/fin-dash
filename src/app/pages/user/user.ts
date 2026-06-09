@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -115,12 +115,12 @@ export class User {
   protected userService = inject(UserService);
 
   public listUsersResource = this.userService.listUsers;
+  protected createStatus = this.userService.createStatus;
+  protected createError = this.userService.createError;
 
-  protected cities = signal<City[]>([
-    ...ukCities
-  ]);
+  protected cities = signal<City[]>([...ukCities]);
 
-  protected userModel = signal<UserFormModel>({
+  private readonly defaultModel: UserFormModel = {
     username: '',
     email: '',
     password: '',
@@ -128,11 +128,19 @@ export class User {
     gender: 'notSpecify',
     addressLine1: '',
     addressLine2: '',
-    city: {
-      name: '',
-      code: ''
-    },
-  });
+    city: { name: '', code: '' },
+  };
+
+  protected userModel = signal<UserFormModel>({ ...this.defaultModel });
+
+  constructor() {
+    effect(() => {
+      if (this.createStatus() === 'success') {
+        this.regForm().reset({ ...this.defaultModel, dob: new Date() });
+        this.userService.createStatus.set('idle');
+      }
+    });
+  }
 
   protected regForm = form(this.userModel, (fields) => {
     // Built-in validation rules
@@ -162,17 +170,11 @@ export class User {
 
   protected onSubmit(event: Event) {
     event.preventDefault();
-
-    // Check if the overall form state is invalid
     if (this.regForm().invalid()) {
-      alert('Please correct the validation errors before submitting.');
       return;
     }
-
     const { dob, ...rest } = this.userModel();
     const payload = { ...rest, dob: dob.toISOString() };
-    console.log('Successfully submitted payload:', payload);
-
     this.userService.createUser(payload);
   }
 

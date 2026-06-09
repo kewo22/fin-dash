@@ -1,5 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { resource } from '@angular/core';
+import { Injectable, inject, signal, resource } from '@angular/core';
 import { DynamodbService } from './dynamodb.service';
 import { CreateUser, User } from '../interfaces';
 
@@ -14,14 +13,22 @@ export class UserService {
         }
     });
 
-    // 5. Mutations: Perform write operation, then update local resource cache or reload
-    async createUser(user: CreateUser): Promise<void> {
-        const createdUser = await this.db.create(user);
+    readonly createStatus = signal<'idle' | 'loading' | 'success' | 'error'>('idle');
+    readonly createError = signal<string | null>(null);
 
-        // Optimistic / Local UI update: Append the new item immediately
-        this.listUsers.update(currentUsers =>
-            currentUsers ? [...currentUsers, createdUser as User] : [createdUser as User]
-        );
+    async createUser(user: CreateUser): Promise<void> {
+        this.createStatus.set('loading');
+        this.createError.set(null);
+        try {
+            const createdUser = await this.db.create(user);
+            this.listUsers.update(currentUsers =>
+                currentUsers ? [...currentUsers, createdUser as User] : [createdUser as User]
+            );
+            this.createStatus.set('success');
+        } catch (err) {
+            this.createError.set(err instanceof Error ? err.message : 'Failed to create user.');
+            this.createStatus.set('error');
+        }
     }
 
 }
