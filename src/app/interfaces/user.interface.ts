@@ -9,7 +9,8 @@ export interface User {
     id: string;
     username: string;
     email: string;
-    password: string;
+    passwordHash: string;
+    passwordSalt: string;
     dob: string;
     gender: Gender;
     addressLine1: string;
@@ -19,19 +20,12 @@ export interface User {
 
 export type CreateUser = Omit<User, 'id'>;
 
-export type EditUser = Omit<User, 'id' | 'dob' | 'password'> & {
+export type EditUser = Omit<User, 'id' | 'dob' | 'passwordHash' | 'passwordSalt'> & {
     dob: Date;
 };
 
-// export type EditUser = {
-//     username: string;
-//     email: string;
-//     gender: Gender;
-//     city: City;
-//     dob: Date;
-//     addressLine1: string;
-//     addressLine2: string;
-// };
-
-/** Form model — dob is a Date object from the datepicker, converted to string on submit. */
-export type UserFormModel = Omit<CreateUser, 'dob'> & { dob: Date };
+/** Form model — plain password collected from the form; hashed in the service before storage. */
+export type UserFormModel = Omit<CreateUser, 'passwordHash' | 'passwordSalt' | 'dob'> & {
+    password: string;
+    dob: Date;
+};

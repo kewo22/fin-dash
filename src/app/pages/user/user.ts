@@ -88,9 +88,7 @@ export class User {
     if (this.regForm().invalid()) {
       return;
     }
-    const { dob, ...rest } = this.userModel();
-    const payload = { ...rest, dob: dob.toISOString() };
-    this.userService.createUser(payload);
+    this.userService.createUser(this.userModel());
   }
 
 }

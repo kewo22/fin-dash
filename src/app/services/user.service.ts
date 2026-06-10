@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, resource } from '@angular/core';
 import { DynamodbService } from './dynamodb.service';
-import { CreateUser, User } from '../interfaces';
+import { CreateUser, User, UserFormModel } from '../interfaces';
+import { hashPassword } from '../utils/crypto';
 
 
 @Injectable({ providedIn: 'root' })
@@ -16,11 +17,14 @@ export class UserService {
     readonly createStatus = signal<'idle' | 'loading' | 'success' | 'error'>('idle');
     readonly createError = signal<string | null>(null);
 
-    async createUser(user: CreateUser): Promise<void> {
+    async createUser(model: UserFormModel): Promise<void> {
         this.createStatus.set('loading');
         this.createError.set(null);
         try {
-            const createdUser = await this.db.create(user);
+            const { password, dob, ...rest } = model;
+            const { hash, salt } = await hashPassword(password);
+            const payload: CreateUser = { ...rest, dob: dob.toISOString(), passwordHash: hash, passwordSalt: salt };
+            const createdUser = await this.db.create(payload);
             this.userResource.update(currentUsers =>
                 currentUsers ? [...currentUsers, createdUser as User] : [createdUser as User]
             );
