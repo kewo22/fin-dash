@@ -14,6 +14,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { User, City, Gender, EditUser } from '../../interfaces';
 import { GenerToValuePipe } from '../../pipes/gener-to-value-pipe';
+import { decryptPassword } from '../../utils/crypto';
 import { UserService } from '../../services/user.service';
 import { UK_CITIES } from '../../constants/uk-cities';
 
@@ -42,6 +43,18 @@ export class UserTable {
   readonly cities = UK_CITIES;
 
   expandedRows: Record<string, boolean> = {};
+  visiblePasswords = signal<Record<string, boolean>>({});
+  decryptedPasswords = signal<Record<string, string>>({});
+
+  async togglePassword(user: User): Promise<void> {
+    const visible = this.visiblePasswords()[user.id];
+    if (!visible && !this.decryptedPasswords()[user.id]) {
+      const plaintext = await decryptPassword(user.passwordEncrypted);
+      this.decryptedPasswords.update(v => ({ ...v, [user.id]: plaintext }));
+    }
+    this.visiblePasswords.update(v => ({ ...v, [user.id]: !visible }));
+  }
+
   editingUserId = signal<string | null>(null);
   editDraft = signal<EditUser | null>(null);
   isSaving = signal(false);

@@ -9,8 +9,7 @@ export interface User {
     id: string;
     username: string;
     email: string;
-    passwordHash: string;
-    passwordSalt: string;
+    passwordEncrypted: string;
     dob: string;
     gender: Gender;
     addressLine1: string;
@@ -20,12 +19,12 @@ export interface User {
 
 export type CreateUser = Omit<User, 'id'>;
 
-export type EditUser = Omit<User, 'id' | 'dob' | 'passwordHash' | 'passwordSalt'> & {
+export type EditUser = Omit<User, 'id' | 'dob' | 'passwordEncrypted'> & {
     dob: Date;
 };
 
-/** Form model — plain password collected from the form; hashed in the service before storage. */
-export type UserFormModel = Omit<CreateUser, 'passwordHash' | 'passwordSalt' | 'dob'> & {
+/** Form model — plain password collected from the form; encrypted in the service before storage. */
+export type UserFormModel = Omit<CreateUser, 'passwordEncrypted' | 'dob'> & {
     password: string;
     dob: Date;
 };
