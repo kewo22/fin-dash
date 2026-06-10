@@ -41,6 +41,13 @@ export class UserTable {
   readonly skeletonRows = Array.from({ length: 5 });
   readonly cities = UK_CITIES;
 
+  expandedRows: Record<string, boolean> = {};
+  visiblePasswords = signal<Record<string, boolean>>({});
+
+  togglePassword(id: string): void {
+    this.visiblePasswords.update(v => ({ ...v, [id]: !v[id] }));
+  }
+
   editingUserId = signal<string | null>(null);
   editDraft = signal<EditUser | null>(null);
   isSaving = signal(false);

@@ -21,20 +21,20 @@
 <p-table [value]="[1,2,3,4,5,6,7,8,9,10]" [rows]="10" aria-label="Loading users">
     <ng-template #header>
         <tr>
+            <th scope="col" style="width: 3rem"></th>
             <th scope="col">Username</th>
             <th scope="col">Email</th>
             <th scope="col">Gender</th>
-            <th scope="col">City</th>
             <th scope="col">Date of Birth</th>
             <th scope="col">Actions</th>
         </tr>
     </ng-template>
     <ng-template #body>
         <tr>
+            <td><p-skeleton height="1rem" width="2rem" /></td>
             <td><p-skeleton height="1rem" /></td>
             <td><p-skeleton height="1rem" /></td>
             <td><p-skeleton height="1rem" width="4rem" /></td>
-            <td><p-skeleton height="1rem" width="5rem" /></td>
             <td><p-skeleton height="1rem" width="6rem" /></td>
             <td><p-skeleton height="1rem" width="4rem" /></td>
         </tr>
@@ -42,9 +42,11 @@
 </p-table>
 } @else {
 <p-table [value]="users() ?? []" [rows]="10" [sortMode]="'multiple'" [tableStyle]="{'min-width': '100%'}"
-    class="p-datatable-sm p-datatable-striped" aria-label="Users table">
+    class="p-datatable-sm p-datatable-striped" aria-label="Users table" dataKey="id" [expandedRowKeys]="expandedRows"
+    (expandedRowKeysChange)="expandedRows = $any($event)">
     <ng-template #header>
         <tr>
+            <th scope="col" style="width: 3rem"></th>
             <th class="text-sm" scope="col" pSortableColumn="username">
                 Username <p-sortIcon field="username" class="scale-75" />
             </th>
@@ -54,24 +56,25 @@
             <th class="text-sm" scope="col" pSortableColumn="gender">
                 Gender <p-sortIcon field="gender" class="scale-75" />
             </th>
-            <th class="text-sm" scope="col" pSortableColumn="city.name">
-                City <p-sortIcon field="city.name" class="scale-75" />
-            </th>
             <th class="text-sm" scope="col" pSortableColumn="dob">
                 Date of Birth <p-sortIcon field="dob" class="scale-75" />
             </th>
             <th class="text-sm" scope="col">Actions</th>
         </tr>
     </ng-template>
-    <ng-template #body let-user>
+    <ng-template #body let-user let-expanded="expanded">
         <tr>
+            <td>
+                <p-button [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" [pRowToggler]="user"
+                    size="small" severity="secondary" [text]="true" [rounded]="true"
+                    [attr.aria-label]="(expanded ? 'Collapse ' : 'Expand ') + user.username" />
+            </td>
             <td class="text-sm">{{ user.username }}</td>
             <td class="text-sm">{{ user.email }}</td>
             <td class="text-sm">
                 <p-tag [value]="user.gender | generToValue"
                     [severity]="user.gender === 'male' ? 'info' : user.gender === 'female' ? 'success' : 'secondary'" />
             </td>
-            <td class="text-sm">{{ user.city.name || '-' }}</td>
             <td class="text-sm">{{ user.dob | date: 'dd/MM/yyyy' }}</td>
             <td>
                 <div class="flex gap-1">
@@ -79,6 +82,39 @@
                         (onClick)="openEdit(user)" [attr.aria-label]="'Edit ' + user.username" />
                     <p-button icon="pi pi-trash" size="small" severity="danger" [text]="true" [rounded]="true"
                         (onClick)="confirmDelete(user)" [attr.aria-label]="'Delete ' + user.username" />
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template #expandedrow let-user>
+        <tr>
+            <td colspan="6" class="bg-surface-50 dark:bg-surface-800">
+                <div class="px-6 py-4 grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs font-medium text-surface-500 uppercase tracking-wide">Password</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono text-surface-700 select-all">
+                                {{ visiblePasswords()[user.id] ? user.password : '••••••••' }}
+                            </span>
+                            <p-button
+                                [icon]="visiblePasswords()[user.id] ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                                size="small" severity="secondary" [text]="true" [rounded]="true"
+                                (onClick)="togglePassword(user.id)"
+                                [attr.aria-label]="visiblePasswords()[user.id] ? 'Hide password' : 'Show password'" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs font-medium text-surface-500 uppercase tracking-wide">City</span>
+                        <span class="text-surface-700">{{ user.city?.name || '-' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs font-medium text-surface-500 uppercase tracking-wide">Address Line 1</span>
+                        <span class="text-surface-700">{{ user.addressLine1 || '-' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs font-medium text-surface-500 uppercase tracking-wide">Address Line 2</span>
+                        <span class="text-surface-700">{{ user.addressLine2 || '-' }}</span>
+                    </div>
                 </div>
             </td>
         </tr>
