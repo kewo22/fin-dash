@@ -81,8 +81,8 @@ export class UserTable {
 
   confirmDelete(user: User): void {
     this.confirmationService.confirm({
-      message: `Delete user <strong>${user.username}</strong>? This cannot be undone.`,
-      header: 'Delete User',
+      message: `Are you sure you want to delete user ? This cannot be undone.`,
+      header: `Delete User - ${user.username}`,
       icon: 'pi pi-trash',
       acceptButtonProps: { label: 'Delete', severity: 'danger', size: 'small' },
       rejectButtonProps: { label: 'Cancel', severity: 'secondary', outlined: true, size: 'small' },

@@ -1,4 +1,13 @@
-<p-confirmdialog />
+<p-confirmdialog>
+    <ng-template #message let-message>
+        @if (message) {
+        <div class="flex flex-row items-center gap-2">
+            <i [ngClass]="message.icon" class="text-red-500 text-sm text-primary-500"></i>
+            <p>{{ message.message }}</p>
+        </div>
+        }
+    </ng-template>
+</p-confirmdialog>
 
 @if (error()) {
 <div class="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
@@ -62,7 +71,7 @@
                 <p-tag [value]="user.gender | generToValue"
                     [severity]="user.gender === 'male' ? 'info' : user.gender === 'female' ? 'success' : 'secondary'" />
             </td>
-            <td class="text-sm">{{ user.city.name }}</td>
+            <td class="text-sm">{{ user.city.name || '-' }}</td>
             <td class="text-sm">{{ user.dob | date: 'dd/MM/yyyy' }}</td>
             <td>
                 <div class="flex gap-1">

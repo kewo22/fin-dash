@@ -7,7 +7,7 @@
     <div class="flex flex-row gap-4">
         <form class="w-1/2 flex flex-col gap-4" (submit)="onSubmit($event)">
             <div class="flex flex-col">
-                <label for="username">Username</label>
+                <label class="required" for="username">Username</label>
                 <input id="username" pInputText [formField]="regForm.username" placeholder="Enter Username" type="text"
                     pSize="small" [class.p-invalid]="regForm.username().dirty() && regForm.username().invalid()" />
 
@@ -21,7 +21,7 @@
             </div>
 
             <div class="flex flex-col">
-                <label for="email">Email Address</label>
+                <label class="required" for="email">Email Address</label>
                 <input id="email" pInputText [formField]="regForm.email" placeholder="Enter Email" type="text"
                     pSize="small" [class.p-invalid]="regForm.email().dirty() && regForm.email().invalid()" />
 
@@ -35,8 +35,8 @@
             </div>
 
             <div class="flex flex-col">
-                <label for="email">Date of birth</label>
-                <p-datepicker [formField]="$any(regForm.dob)" dateFormat="dd/mm/yy" placeholder="Choose a date"
+                <label for="dob">Date of birth</label>
+                <p-datepicker id="dob" [formField]="$any(regForm.dob)" dateFormat="dd/mm/yy" placeholder="Choose a date"
                     size="small" />
             </div>
 
@@ -97,7 +97,7 @@
 
 
             <div class=" flex flex-col">
-                <label for="password">Password</label>
+                <label class="required" for="password">Password</label>
                 <input id="password" pInputText [formField]="regForm.password" placeholder="Enter Password"
                     type="password" pSize="small"
                     [class.p-invalid]="regForm.password().dirty() && regForm.password().invalid()" />

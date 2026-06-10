@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.required::after {
+    @apply pl-1 content-['*'] text-red-500 font-medium;
+}
