@@ -9,7 +9,7 @@
 }
 
 @if (isLoading()) {
-<p-table [value]="skeletonRows" [rows]="10" aria-label="Loading users">
+<p-table [value]="[1,2,3,4,5,6,7,8,9,10]" [rows]="10" aria-label="Loading users">
     <ng-template #header>
         <tr>
             <th scope="col">Username</th>

@@ -17,8 +17,6 @@ import { GenerToValuePipe } from '../../pipes/gener-to-value-pipe';
 import { UserService } from '../../services/user.service';
 import { UK_CITIES } from '../../constants/uk-cities';
 
-
-
 @Component({
   selector: 'app-user-table',
   imports: [
